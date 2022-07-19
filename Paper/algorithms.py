@@ -1,4 +1,7 @@
-from Paper import methods_for_input_preprocess, methods_for_diagnosis, methods_for_ranking
+import math
+
+from Paper import methods_for_input_preprocess, methods_for_diagnosis, methods_for_ranking, functions
+
 
 def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
     """
@@ -29,7 +32,8 @@ def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
 
     # calculate wasted effort, weighted precision, weighted recall
-    # todo
+    wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
+    weighted_precision, weighted_recall = functions.calculate_weighted_precision_and_recall(noa, F, ranked_diagnoses)
 
     result = [[instance_num,
                noa,
@@ -39,7 +43,12 @@ def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
                str(F),
                'MRSD',
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
-               '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses)))]]
+               '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
+               wasted_effort]]
+    for k in range(10, 110, 10):
+        result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])
+    for k in range(10, 110, 10):
+        result[0].append(weighted_recall[math.ceil(len(weighted_recall) * float(k) / 100)-1])
 
     return result
 
@@ -76,7 +85,8 @@ def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
 
     # calculate wasted effort, weighted precision, weighted recall
-    # todo
+    wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
+    weighted_precision, weighted_recall = functions.calculate_weighted_precision_and_recall(noa, F, ranked_diagnoses)
 
     result = [[instance_num,
                noa,
@@ -86,7 +96,12 @@ def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
                str(F),
                'DMRSD_I1D1R1',
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
-               '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses)))]]
+               '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
+               wasted_effort]]
+    for k in range(10, 110, 10):
+        result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])
+    for k in range(10, 110, 10):
+        result[0].append(weighted_recall[math.ceil(len(weighted_recall) * float(k) / 100)-1])
 
     return result
 

@@ -255,3 +255,59 @@ def normalize_diagnoses(ranked_diagnoses):
     for diagnosis in normalized_diagnoses:
         diagnosis[1] = diagnosis[1] / probabilities_sum
     return normalized_diagnoses
+
+def calculate_wasted_effort(F, diagnoses):
+    agents_examined = []
+    faulty_agents_examined = []
+    healthy_agents_examined = []
+    for diagnosis in diagnoses:
+        if len(faulty_agents_examined) == len(F):
+            break
+        d_agents = diagnosis[0]
+        for a in d_agents:
+            if a not in agents_examined:
+                agents_examined.append(a)
+                if a in F:
+                    faulty_agents_examined.append(a)
+                else:
+                    healthy_agents_examined.append(a)
+    wasted_effort = len(healthy_agents_examined)
+    return wasted_effort
+
+def calculate_weighted_precision_and_recall(number_of_agents, oracle, diagnoses):
+    top_k_precision_accums = [0 for _ in diagnoses]
+    top_k_recall_accums = [0 for _ in diagnoses]
+    healthy_agents = [a for a in list(range(number_of_agents)) if a not in oracle]
+    for k in range(len(diagnoses)):
+        top_k_diagnoses = [copy.deepcopy(diagnosis) for diagnosis in diagnoses[:k+1]]
+        top_k_diagnoses_probability_sum = sum([d[1] for d in top_k_diagnoses])
+        for tkd in top_k_diagnoses:
+            tkd[1] = tkd[1] / top_k_diagnoses_probability_sum
+        precision_accum = 0
+        recall_accum = 0
+        for diagnosis in top_k_diagnoses:
+            diagnosed_agents = diagnosis[0]
+            diagnosis_probability = diagnosis[1]
+            diagnosed_healthy_agents = [a for a in list(range(number_of_agents)) if a not in diagnosed_agents]
+            precision, recall = precision_recall_for_diagnosis(diagnosed_agents, diagnosed_healthy_agents, oracle, healthy_agents)
+            if precision != "undef":
+                precision_accum = precision_accum + precision * diagnosis_probability
+            if recall != "undef":
+                recall_accum = recall_accum + recall * diagnosis_probability
+        top_k_precision_accums[k], top_k_recall_accums[k] = precision_accum, recall_accum
+    return top_k_precision_accums, top_k_recall_accums
+
+def precision_recall_for_diagnosis(diagnosed_agents, diagnosed_healthy_agents, oracle, healthy_agents):
+    fp = len([a for a in diagnosed_agents if a not in oracle])
+    fn = len([a for a in diagnosed_healthy_agents if a not in healthy_agents])
+    tp = len([a for a in diagnosed_agents if a in oracle])
+    tn = len([a for a in diagnosed_healthy_agents if a in healthy_agents])
+    if (tp + fp) == 0:
+        precision = "undef"
+    else:
+        precision = (tp + 0.0) / float(tp + fp)
+    if (tp + fn) == 0:
+        recall = "undef"
+    else:
+        recall = (tp + 0.0) / float(tp + fn)
+    return precision, recall

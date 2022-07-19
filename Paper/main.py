@@ -101,8 +101,27 @@ def write_data_to_excel(data):
         {'header': 'diagnosis algorithm'},
         {'header': 'diagnoses'},
         {'header': 'ranked diagnoses'},
-        {'header': 'precision'},
-        {'header': 'recall'}
+        {'header': 'Wasted Effort'},
+        {'header': 'Weighted Precision 10'},
+        {'header': 'Weighted Precision 20'},
+        {'header': 'Weighted Precision 30'},
+        {'header': 'Weighted Precision 40'},
+        {'header': 'Weighted Precision 50'},
+        {'header': 'Weighted Precision 60'},
+        {'header': 'Weighted Precision 70'},
+        {'header': 'Weighted Precision 80'},
+        {'header': 'Weighted Precision 90'},
+        {'header': 'Weighted Precision 100'},
+        {'header': 'Weighted Recall 10'},
+        {'header': 'Weighted Recall 20'},
+        {'header': 'Weighted Recall 30'},
+        {'header': 'Weighted Recall 40'},
+        {'header': 'Weighted Recall 50'},
+        {'header': 'Weighted Recall 60'},
+        {'header': 'Weighted Recall 70'},
+        {'header': 'Weighted Recall 80'},
+        {'header': 'Weighted Recall 90'},
+        {'header': 'Weighted Recall 100'}
     ]
     # write the data to xlsx file
     workbook = xlsxwriter.Workbook('results.xlsx')
