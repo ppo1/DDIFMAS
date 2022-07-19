@@ -16,7 +16,6 @@ def create_random_graph(noa):
         G = nx.erdos_renyi_graph(noa, 0.5, seed=123, directed=False)
         connected = nx.is_connected(G)
     # plot the graph
-    subax1 = plt.subplot(121)
     nx.draw(G, with_labels=True, font_weight='bold')
     plt.show()
     return G
@@ -101,6 +100,10 @@ def write_data_to_excel(data):
         {'header': 'diagnosis algorithm'},
         {'header': 'diagnoses'},
         {'header': 'ranked diagnoses'},
+        {'header': 'number of diagnoses'},
+        {'header': 'Information Sent - Diagnosis'},
+        {'header': 'Information Sent - Ranking'},
+        {'header': 'Information Sent - Both'},
         {'header': 'Wasted Effort'},
         {'header': 'Weighted Precision 10'},
         {'header': 'Weighted Precision 20'},
@@ -165,4 +168,3 @@ if __name__ == '__main__':
     run_random_experiments([7, 8, 9], [2], [10], 10)
 
     print('Bye, PyCharm')
-

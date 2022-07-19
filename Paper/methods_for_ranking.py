@@ -44,33 +44,40 @@ def local_estimation_and_derivative_functions(diagnosis, local_spectra):
     return LF, h, r
 
 def eval_P(H, LF):
+    # information sent during the evaluation of P
+    information_sent_eval_P = 0
     # first P calculation
     P = functions.substitute_and_eval(H, LF[0][2])
     # rest P calculations
     for a in list(range(len(LF)))[1:]:
+        information_sent_eval_P += 1
         extended_P = functions.extend_P(P, a, LF[a][0])
         P = functions.substitute_and_eval(H, extended_P)
-    return P
+    return P, information_sent_eval_P
 
 def eval_grad(diagnosis, H, P, LF):
+    information_sent_eval_grad = 0
     Gradients = {}
     for a in diagnosis:
+        information_sent_eval_grad += 1
         rs_function = P / LF[a][2]
         rs_value = functions.substitute_and_eval(H, rs_function)
         gradient_function = rs_value*LF[a][4]
         gradient_value = functions.substitute_and_eval(H, gradient_function)
         Gradients[f'h{a}'] = float(gradient_value)
-    return Gradients
+    return Gradients, information_sent_eval_grad
 
-def update_h(H, Gradients):
+def update_h(H, Gradients, number_of_agents):
+    information_sent_update_h = 0
     for key in Gradients.keys():
+        information_sent_update_h += number_of_agents - 1
         if H[key] + Gradients[key] > 1.0:
             H[key] = 1.0
         elif H[key] + Gradients[key] < 0.0:
             H[key] = 0.0
         else:
             H[key] = H[key] + Gradients[key]
-    return H
+    return H, information_sent_update_h
 
 def ranking_1(local_spectra, diagnoses):
     """
@@ -82,6 +89,7 @@ def ranking_1(local_spectra, diagnoses):
     :param diagnoses: the diagnosis list
     :return: ranked diagnosis list
     """
+    information_sent = 0
     ranked_diagnoses = []
     for diagnosis in diagnoses:
         # initialize H values of the agents involved in the diagnosis to 0.5
@@ -113,8 +121,9 @@ def ranking_1(local_spectra, diagnoses):
 
         # while true
         while True:
-            # calculate P_n(d, H, LS)
-            P = eval_P(H, LF)
+            # calculate P_n(d, H, LS) and record the sent information
+            P, information_sent_eval_P = eval_P(H, LF)
+            information_sent += information_sent_eval_P
             P = float(P)
             P_arr.append(P)
             # if condition is is reached, abort
@@ -125,9 +134,12 @@ def ranking_1(local_spectra, diagnoses):
                 likelihood = P_arr[-2]
                 break
             # calculate gradients
-            Gradients = eval_grad(diagnosis, H, P_arr[-1], LF)
+            Gradients, information_sent_eval_grad = eval_grad(diagnosis, H, P_arr[-1], LF)
+            information_sent += information_sent_eval_grad
             # update H
-            H = update_h(H, Gradients)
+            number_of_agents = len(local_spectra)
+            H, information_sent_update_h = update_h(H, Gradients, number_of_agents)
+            information_sent += information_sent_update_h
             # print(P_arr)
             # print(H)
 
@@ -135,4 +147,4 @@ def ranking_1(local_spectra, diagnoses):
         print(f'finished ranking diagnosis: {diagnosis}, rank: [{diagnosis},{likelihood}]')
     # normalize the diagnosis probabilities
     normalized_diagnoses = functions.normalize_diagnoses(ranked_diagnoses)
-    return normalized_diagnoses
+    return normalized_diagnoses, information_sent

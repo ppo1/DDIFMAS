@@ -44,6 +44,10 @@ def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
                'MRSD',
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
+               len(ranked_diagnoses),
+               -1,
+               -1,
+               -1,
                wasted_effort]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])
@@ -74,12 +78,12 @@ def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
-    # run the algorithm
-    diagnoses = methods_for_diagnosis.diagnosis_1(local_spectra)
+    # run the algorithm, collect diagnosis messages count
+    diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_1(local_spectra)
     print(f'diagnoses are: {diagnoses}')
 
     # rank the diagnoses
-    ranked_diagnoses = methods_for_ranking.ranking_1(local_spectra, diagnoses)
+    ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses)
 
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
@@ -97,6 +101,10 @@ def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
                'DMRSD_I1D1R1',
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
+               len(ranked_diagnoses),
+               info_sent_diagnosis,
+               info_sent_ranking,
+               info_sent_diagnosis + info_sent_ranking,
                wasted_effort]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])

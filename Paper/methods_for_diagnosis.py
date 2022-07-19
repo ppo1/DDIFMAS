@@ -29,11 +29,12 @@ def diagnosis_1(local_spectra):
     :param local_spectra: the local spectra of the agents
     :return: a set of diagnoses
     """
+    information_sent = 0
     diagnoses = []
     a = 0
     while a < len(local_spectra):
         print(f'agent {a} computes diagnoses given previous diagnosis set {diagnoses}')
-        # diagnoses = compute_diagnoses(local_spectra[a], diagnoses)
+        information_sent += len(diagnoses)
         local_spectrum = local_spectra[a]
         # calculate conflicts
         conflicts = []
@@ -69,4 +70,4 @@ def diagnosis_1(local_spectra):
     for d in diagnoses:
         d.sort()
     diagnoses_sorted = functions.sort_diagnoses_by_cardinality(diagnoses)
-    return diagnoses_sorted
+    return diagnoses_sorted, information_sent
