@@ -97,6 +97,7 @@ def write_data_to_excel(data):
         {'header': 'nor'},
         {'header': 'noi'},
         {'header': 'oracle'},
+        {'header': 'spectrum'},
         {'header': 'diagnosis algorithm'},
         {'header': 'diagnoses'},
         {'header': 'ranked diagnoses'},

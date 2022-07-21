@@ -178,7 +178,13 @@ def calculate_e_dk(dk: List[int], activity_matrix: List[List[int]], error_vector
     h0 = np.array(h0)
     sol = minimize(objective, h0, method="L-BFGS-B", bounds=bnds, tol=1e-3, options={'maxiter': 100})
 
-    return -sol.fun
+    # extracting H's and P
+    H = {}
+    for h in renamed_vars:
+        H[f'h{h}'] = float(sol.x[renamed_vars[h]])
+    P = -sol.fun
+
+    return P, H
 
 def local_estimation_and_derivative_functions_for_agent(h, r, a, lsa, diagnosis):
     # populate the local estimation function table

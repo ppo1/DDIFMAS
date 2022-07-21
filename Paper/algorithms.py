@@ -41,6 +41,7 @@ def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
                nor,
                inum,
                str(F),
+               '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'MRSD',
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
@@ -82,8 +83,8 @@ def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
     diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_1(local_spectra)
     print(f'diagnoses are: {diagnoses}')
 
-    # rank the diagnoses
-    ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses)
+    # rank the diagnoses - can choose the step size for the gradient descent
+    ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
 
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
@@ -98,6 +99,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
                nor,
                inum,
                str(F),
+               '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'DMRSD_I1D1R1',
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),

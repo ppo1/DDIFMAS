@@ -19,10 +19,10 @@ def ranking_0(spectrum, diagnoses):
         error_vector = [row[-1] for row in spectrum]
 
         # calculate the probability of the diagnosis
-        likelihood = functions.calculate_e_dk(diagnosis, activity_matrix, error_vector)
+        likelihood, H = functions.calculate_e_dk(diagnosis, activity_matrix, error_vector)
 
         # save the result
-        ranked_diagnoses.append([diagnosis, likelihood])
+        ranked_diagnoses.append([diagnosis, likelihood, H])
         print(f'finished ranking diagnosis: {diagnosis}, rank: [{diagnosis},{likelihood}]')
 
     # normalize the diagnosis probabilities
@@ -67,19 +67,19 @@ def eval_grad(diagnosis, H, P, LF):
         Gradients[f'h{a}'] = float(gradient_value)
     return Gradients, information_sent_eval_grad
 
-def update_h(H, Gradients, number_of_agents):
+def update_h(H, Gradients, step, number_of_agents):
     information_sent_update_h = 0
     for key in Gradients.keys():
         information_sent_update_h += number_of_agents - 1
-        if H[key] + Gradients[key] > 1.0:
+        if H[key] + step * Gradients[key] > 1.0:
             H[key] = 1.0
-        elif H[key] + Gradients[key] < 0.0:
+        elif H[key] + step * Gradients[key] < 0.0:
             H[key] = 0.0
         else:
-            H[key] = H[key] + Gradients[key]
+            H[key] = H[key] + step * Gradients[key]
     return H, information_sent_update_h
 
-def ranking_1(local_spectra, diagnoses):
+def ranking_1(local_spectra, diagnoses, step):
     """
     ranks the diagnoses. for each diagnosis, the agents
     compute a corresponding partial estimation function
@@ -110,7 +110,7 @@ def ranking_1(local_spectra, diagnoses):
             H[f'h{a}'] = 0.5
 
         # initialize an epsilon value for the stop condition: |P_n(d, H, LS) - P_{n-1}(d, H, LS)| < epsilon
-        epsilon = 0.005
+        epsilon = 0.0005
 
         # initialize P_{n-1}(d, H, LS) to zero
         P_arr = [0.0]
@@ -138,12 +138,12 @@ def ranking_1(local_spectra, diagnoses):
             information_sent += information_sent_eval_grad
             # update H
             number_of_agents = len(local_spectra)
-            H, information_sent_update_h = update_h(H, Gradients, number_of_agents)
+            H, information_sent_update_h = update_h(H, Gradients, step, number_of_agents)
             information_sent += information_sent_update_h
             # print(P_arr)
             # print(H)
 
-        ranked_diagnoses.append([diagnosis, likelihood])
+        ranked_diagnoses.append([diagnosis, likelihood, H])
         print(f'finished ranking diagnosis: {diagnosis}, rank: [{diagnosis},{likelihood}]')
     # normalize the diagnosis probabilities
     normalized_diagnoses = functions.normalize_diagnoses(ranked_diagnoses)

@@ -1,28 +1,45 @@
-from scipy.optimize import minimize
-import sympy as sp
+from Paper import methods_for_ranking
 
-x2_symbol = sp.Symbol('x2')
-u2_symbol = sp.Symbol('u2')
-fm = 25 * u2_symbol - 20.0 * (sp.sin(x2_symbol)) + 38.7296387 * (sp.cos(x2_symbol)) - 38.7296387
+spectrum = [
+    [1, 1, 0, 1],
+    [0, 1, 1, 1],
+    [1, 0, 0, 1],
+    [1, 0, 1, 0]
+]
+local_spectra = [
+    [
+        [1, 1, 0, 1],
+        [2, 2, 2, 2],
+        [1, 0, 0, 1],
+        [1, 0, 1, 0]
+    ],
+    [
+        [1, 1, 0, 1],
+        [0, 1, 1, 1],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+    ],
+    [
+        [2, 2, 2, 2],
+        [0, 1, 1, 1],
+        [2, 2, 2, 2],
+        [1, 0, 1, 0]
+    ]
+]
 
-def func(x):
-    x2_float, u2_float = x
-    return -fm.subs([(x2_symbol, x2_float), (u2_symbol, u2_float)])
+diagnoses = [[0, 1], [0, 2]]
 
-def constraint1(x):
-    x2_float, u2_float = x
-    return -u2_float + 40 * sp.sin(x2_float) + 0.2
+ranked_diagnoses00 = methods_for_ranking.ranking_0(spectrum, diagnoses)
 
-def constraint2(x):
-    x2_float, u2_float = x
-    return -u2_float - 40 * sp.sin(x2_float) + 0.2
+ranked_diagnoses01, info_sent_ranking01 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.1)
+ranked_diagnoses02, info_sent_ranking02 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.2)
+ranked_diagnoses03, info_sent_ranking03 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.3)
+ranked_diagnoses04, info_sent_ranking04 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.4)
+ranked_diagnoses05, info_sent_ranking05 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
+ranked_diagnoses06, info_sent_ranking06 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.6)
+ranked_diagnoses07, info_sent_ranking07 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.7)
+ranked_diagnoses08, info_sent_ranking08 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.8)
+ranked_diagnoses09, info_sent_ranking09 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.913)
+ranked_diagnoses10, info_sent_ranking10 = methods_for_ranking.ranking_1(local_spectra, diagnoses, 1.0)
 
-b = [0, 1]
-bounds = [b, b]
-con1 = {'type': 'ineq', 'fun': constraint1}
-con2 = {'type': 'ineq', 'fun': constraint2}
-constraints = (con1, con2)
-x0 = [0, 0]
-solution = minimize(func, x0, method='SLSQP', bounds=bounds, constraints=constraints)
-print(solution)
 print(9)
