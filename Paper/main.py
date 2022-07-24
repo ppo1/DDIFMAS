@@ -81,7 +81,7 @@ def generate_spectrum(noa, nor, F, T):
             # if it was in the corresponding trace update its cell to 1
             if j in T[i]:
                 run[j] = 1
-                # if it is in the faulty agents list update the error vector cell to 1
+                # if it is in the faulty agents list update the error vector cell to 1 todo: insert intermittency
                 if j in F:
                     run[-1] = 1
             else:

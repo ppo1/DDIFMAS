@@ -1,27 +1,113 @@
+import copy
+
 from Paper import functions
 import sympy
 
-def ranking_0(spectrum, diagnoses):
+# def ranking_0(spectrum, diagnoses):
+#     """
+#     ranks the diagnoses. for each diagnosis, the diagnoser
+#     computes a corresponding estimation function
+#     and then maximizes it
+#     :param spectrum: the spectrum
+#     :param diagnoses: the diagnosis list
+#     :return: ranked diagnosis list
+#     """
+#     ranked_diagnoses = []
+#     for diagnosis in diagnoses:
+#         print(f'ranking diagnosis: {diagnosis}')
+#
+#         # divide the spectrum to activity matrix and error vector
+#         activity_matrix = [row[:-1] for row in spectrum]
+#         error_vector = [row[-1] for row in spectrum]
+#
+#         # calculate the probability of the diagnosis
+#         likelihood, H = functions.calculate_e_dk(diagnosis, activity_matrix, error_vector)
+#
+#         # save the result
+#         ranked_diagnoses.append([diagnosis, likelihood, H])
+#         print(f'finished ranking diagnosis: {diagnosis}, rank: [{diagnosis},{likelihood}]')
+#
+#     # normalize the diagnosis probabilities
+#     normalized_diagnoses = functions.normalize_diagnoses(ranked_diagnoses)
+#     return normalized_diagnoses
+
+def estimation_and_derivative_functions(diagnosis, spectrum):
+    # declare variables
+    h = []
+    for hj in range(len(spectrum[0][:-1])):
+        h.append(sympy.symbols(f'h{hj}'))
+    ef, DF = functions.estimation_and_derivative_functions(h, spectrum, diagnosis)
+    return ef, DF, h
+
+def eval_grad_R0(diagnosis, H, DF):
+    Gradients = {}
+    for a in diagnosis:
+        gradient_value = functions.substitute_and_eval(H, DF[a])
+        Gradients[f'h{a}'] = float(gradient_value)
+    return Gradients
+
+def ranking_0(spectrum, diagnoses, step):
     """
     ranks the diagnoses. for each diagnosis, the diagnoser
     computes a corresponding estimation function
     and then maximizes it
     :param spectrum: the spectrum
     :param diagnoses: the diagnosis list
+    :param step: the gradient step
     :return: ranked diagnosis list
     """
     ranked_diagnoses = []
     for diagnosis in diagnoses:
+        # initialize H values of the agents involved in the diagnosis to 0.5
+        # initialize an epsilon value for the stop condition: |P_n(d, H, M) - P_{n-1}(d, H, M)| < epsilon
+        # initialize P_{n-1}(d, H, M) to zero
+        # create symbolic local estimation function (E)
+        # create symbolic local derivative function (D)
+        # while true
+        #   calculate P_n(d, H, M)
+        #   if condition is is reached, abort
+        #   calculate gradients
+        #   update H
         print(f'ranking diagnosis: {diagnosis}')
 
-        # divide the spectrum to activity matrix and error vector
-        activity_matrix = [row[:-1] for row in spectrum]
-        error_vector = [row[-1] for row in spectrum]
+        # initialize H values of the agents involved in the diagnosis to 0.5
+        H = {}
+        for a in diagnosis:
+            H[f'h{a}'] = 0.5
 
-        # calculate the probability of the diagnosis
-        likelihood, H = functions.calculate_e_dk(diagnosis, activity_matrix, error_vector)
+        # initialize an epsilon value for the stop condition: |P_n(d, H, LS) - P_{n-1}(d, H, LS)| < epsilon
+        epsilon = 0.0005
 
-        # save the result
+        # initialize P_{n-1}(d, H, LS) to zero
+        P_arr = [[0.0, {}]]
+
+        # create symbolic local estimation function (E)
+        # create symbolic local derivative function (D)
+        ef, DF, h = estimation_and_derivative_functions(diagnosis, spectrum)
+
+        # while true
+        while True:
+            # calculate P_n(d, H, S)
+            P = functions.substitute_and_eval(H, ef)
+            P = float(P)
+            P_arr.append([P, copy.deepcopy(H)])
+            # if condition is reached, abort
+            if abs(P_arr[-1][0] - P_arr[-2][0]) < epsilon:
+                likelihood = P_arr[-1][0]
+                H = P_arr[-1][1]
+                break
+            if P_arr[-1][0] > 1.0:
+                likelihood = P_arr[-2][0]
+                H = P_arr[-2][1]
+                break
+            # calculate gradients
+            Gradients = eval_grad_R0(diagnosis, H, DF)
+            # update H
+            number_of_agents = len(spectrum[0][:-1])
+            H, _ = update_h(H, Gradients, step, number_of_agents)
+            print(P_arr)
+            # print(H)
+
         ranked_diagnoses.append([diagnosis, likelihood, H])
         print(f'finished ranking diagnosis: {diagnosis}, rank: [{diagnosis},{likelihood}]')
 
@@ -87,6 +173,7 @@ def ranking_1(local_spectra, diagnoses, step):
     order, until the global function is maximized
     :param local_spectra: the local spectra of each agent
     :param diagnoses: the diagnosis list
+    :param step: the gradient step
     :return: ranked diagnosis list
     """
     information_sent = 0
@@ -94,7 +181,7 @@ def ranking_1(local_spectra, diagnoses, step):
     for diagnosis in diagnoses:
         # initialize H values of the agents involved in the diagnosis to 0.5
         # initialize an epsilon value for the stop condition: |P_n(d, H, M) - P_{n-1}(d, H, M)| < epsilon
-        # initialize P_{n-1}(d, H, M) to minus infinity
+        # initialize P_{n-1}(d, H, M) to zero
         # create symbolic local estimation function (LE) for each of the agents
         # create symbolic local derivative function (LD) for each of the agents
         # while true

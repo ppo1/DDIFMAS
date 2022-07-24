@@ -1,7 +1,7 @@
 import copy
-from typing import List, Callable
-from scipy.optimize import minimize
-import numpy as np
+# from typing import List, Callable
+# from scipy.optimize import minimize
+# import numpy as np
 import sympy
 
 
@@ -125,66 +125,87 @@ def sort_diagnoses_by_cardinality(diagnoses):
         sorted_diagnoses.append(diag)
     return sorted_diagnoses
 
-def calculate_e_dk(dk: List[int], activity_matrix: List[List[int]], error_vector: List[int]):
-    funcArr = ['(-1)']
-    objective: Callable[[List[float]], float] = None
-    active_vars = [False] * len(activity_matrix[0])
+# def calculate_e_dk(dk: List[int], activity_matrix: List[List[int]], error_vector: List[int]):
+#     funcArr = ['(-1)']
+#     objective: Callable[[List[float]], float] = None
+#     active_vars = [False] * len(activity_matrix[0])
+#
+#     # get the active vars in this diagnosis
+#     for i, e in enumerate(error_vector):
+#         for j, c in enumerate(activity_matrix[i]):
+#             if activity_matrix[i][j] == 1 and j in dk:
+#                 active_vars[j] = True
+#
+#     # re-labeling variables to conform to scipy's requirements
+#     index_rv = 0
+#     renamed_vars = {}
+#     for i, av in enumerate(active_vars):
+#         if av:
+#             renamed_vars[str(i)] = index_rv
+#             index_rv += 1
+#
+#     # building the target function as a string
+#     for i, e in enumerate(error_vector):
+#         fa = "1*"
+#         for j, c in enumerate(activity_matrix[i]):
+#             if activity_matrix[i][j] == 1 and j in dk:
+#                 fa = fa + f"x[{renamed_vars[str(j)]}]*"
+#         fa = fa[:-1]
+#         if error_vector[i] == 1:
+#             fa = "*(1-" + fa + ")"
+#         else:
+#             fa = "*(" + fa + ")"
+#         funcArr.append(fa)
+#
+#     # using dynamic programming to initialize the target function
+#     func = ""
+#     for fa in funcArr:
+#         func = func + fa
+#     objective = eval(f'lambda x: {func}')
+#
+#     # building bounds over the variables
+#     # and the initial health vector
+#     b = (0.0, 1.0)
+#     initial_h = 0.5
+#     bnds = []
+#     h0 = []
+#     for av in active_vars:
+#         if av:
+#             bnds.append(b)
+#             h0.append(initial_h)
+#
+#     # solving the minimization problem
+#     h0 = np.array(h0)
+#     sol = minimize(objective, h0, method="L-BFGS-B", bounds=bnds, tol=1e-3, options={'maxiter': 100})
+#
+#     # extracting H's and P
+#     H = {}
+#     for h in renamed_vars:
+#         H[f'h{h}'] = float(sol.x[renamed_vars[h]])
+#     P = -sol.fun
+#
+#     return P, H
 
-    # get the active vars in this diagnosis
-    for i, e in enumerate(error_vector):
-        for j, c in enumerate(activity_matrix[i]):
-            if activity_matrix[i][j] == 1 and j in dk:
-                active_vars[j] = True
+def estimation_and_derivative_functions(h, spectrum, diagnosis):
+    # estimation function
+    ef = 1
+    for row in spectrum:
+        row_comp = 1
+        for fa in diagnosis:
+            if row[fa] == 1:
+                # row_comp += f'(h{fa})'
+                row_comp = row_comp * h[fa]
+        if row[-1] == 1:
+            # row_comp = '(1 - ' + row_comp + ')'
+            row_comp = 1 - row_comp
+        ef = ef * row_comp
 
-    # re-labeling variables to conform to scipy's requirements
-    index_rv = 0
-    renamed_vars = {}
-    for i, av in enumerate(active_vars):
-        if av:
-            renamed_vars[str(i)] = index_rv
-            index_rv += 1
-
-    # building the target function as a string
-    for i, e in enumerate(error_vector):
-        fa = "1*"
-        for j, c in enumerate(activity_matrix[i]):
-            if activity_matrix[i][j] == 1 and j in dk:
-                fa = fa + f"x[{renamed_vars[str(j)]}]*"
-        fa = fa[:-1]
-        if error_vector[i] == 1:
-            fa = "*(1-" + fa + ")"
-        else:
-            fa = "*(" + fa + ")"
-        funcArr.append(fa)
-
-    # using dynamic programming to initialize the target function
-    func = ""
-    for fa in funcArr:
-        func = func + fa
-    objective = eval(f'lambda x: {func}')
-
-    # building bounds over the variables
-    # and the initial health vector
-    b = (0.0, 1.0)
-    initial_h = 0.5
-    bnds = []
-    h0 = []
-    for av in active_vars:
-        if av:
-            bnds.append(b)
-            h0.append(initial_h)
-
-    # solving the minimization problem
-    h0 = np.array(h0)
-    sol = minimize(objective, h0, method="L-BFGS-B", bounds=bnds, tol=1e-3, options={'maxiter': 100})
-
-    # extracting H's and P
-    H = {}
-    for h in renamed_vars:
-        H[f'h{h}'] = float(sol.x[renamed_vars[h]])
-    P = -sol.fun
-
-    return P, H
+    # derivative functions
+    DF = []
+    for hi, hvar in enumerate(h):
+        df = sympy.diff(ef, hvar)
+        DF.append(df)
+    return ef, DF
 
 def local_estimation_and_derivative_functions_for_agent(h, r, a, lsa, diagnosis):
     # populate the local estimation function table

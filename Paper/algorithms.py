@@ -25,8 +25,8 @@ def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
     # run the algorithm
     diagnoses = methods_for_diagnosis.diagnosis_0(S)
 
-    # rank the diagnoses (diagnoses are normalized!)
-    ranked_diagnoses = methods_for_ranking.ranking_0(S, diagnoses)
+    # rank the diagnoses (diagnoses are normalized!) - can choose the step size for the gradient descent
+    ranked_diagnoses = methods_for_ranking.ranking_0(S, diagnoses, 0.5)
 
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
