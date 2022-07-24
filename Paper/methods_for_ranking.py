@@ -105,7 +105,7 @@ def ranking_0(spectrum, diagnoses, step):
             # update H
             number_of_agents = len(spectrum[0][:-1])
             H, _ = update_h(H, Gradients, step, number_of_agents)
-            print(P_arr)
+            # print(P_arr)
             # print(H)
 
         ranked_diagnoses.append([diagnosis, likelihood, H])
