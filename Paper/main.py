@@ -151,7 +151,7 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
     for noa_i, noa in enumerate(number_of_agents):
         G = create_random_graph(noa)
         for nof_i, nof in enumerate(number_of_faulty):
-            F = choose_faulty_agents(noa_l, nof)
+            F = choose_faulty_agents(noa, nof)
             F.sort()
             for afp_i, afp in enumerate(agent_fault_probabilities):
                 for nor_i, nor in enumerate(number_of_runs):
@@ -177,6 +177,6 @@ if __name__ == '__main__':
     print('Hi, PyCharm')
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
-    run_random_experiments([7, 8, 9], [2], [0.9], [10], 10)
+    run_random_experiments([7], [2], [0.5], [10], 10)
 
     print('Bye, PyCharm')
