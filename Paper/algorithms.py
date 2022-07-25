@@ -3,11 +3,12 @@ import math
 from Paper import methods_for_input_preprocess, methods_for_diagnosis, methods_for_ranking, functions
 
 
-def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
+def MRSD(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
     :param nof: number of faulty agents
+    :param afp: agent fault probability
     :param nor: number of runs
     :param inum: instance number
     :param G: graph
@@ -20,6 +21,7 @@ def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
     print(f'running MRSD on {instance_num} ({inum}) with:')
     print(f'        - number of agents: {noa}')
     print(f'        - number of faulty agents: {nof}')
+    print(f'        - agent fault probability: {afp}')
     print(f'        - number of runs: {nor}')
 
     # run the algorithm
@@ -38,6 +40,7 @@ def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
     result = [[instance_num,
                noa,
                nof,
+               afp,
                nor,
                inum,
                str(F),
@@ -57,11 +60,12 @@ def MRSD(instance_num, noa, nof, nor, inum, G, F, T, S):
 
     return result
 
-def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
+def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
     :param nof: number of faulty agents
+    :param afp: agent fault probability
     :param nor: number of runs
     :param inum: instance number
     :param G: graph
@@ -74,6 +78,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
     print(f'running DMRSD_I1D1R1 on {instance_num} ({inum}) with:')
     print(f'        - number of agents: {noa}')
     print(f'        - number of faulty agents: {nof}')
+    print(f'        - agent fault probability: {afp}')
     print(f'        - number of runs: {nor}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
@@ -96,6 +101,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, nor, inum, G, F, T, S):
     result = [[instance_num,
                noa,
                nof,
+               afp,
                nor,
                inum,
                str(F),

@@ -68,7 +68,7 @@ def generate_traces(G, noa, nor):
         T.append(trace)
     return T
 
-def generate_spectrum(noa, nor, F, T):
+def generate_spectrum(noa, nor, afp, F, T):
     # create an empty (with 2's) spectrum
     S = [[2 for _ in range(noa + 1)] for _ in range(nor)]
 
@@ -76,17 +76,23 @@ def generate_spectrum(noa, nor, F, T):
     for i, run in enumerate(S):
         # initialize the error vector cell to 0
         run[-1] = 0
-        # for each agent in that row
+        # for each agent in that row set its involvement
         for j in range(len(run[:-1])):
             # if it was in the corresponding trace update its cell to 1
             if j in T[i]:
                 run[j] = 1
-                # if it is in the faulty agents list update the error vector cell to 1 todo: insert intermittency
-                if j in F:
-                    run[-1] = 1
             else:
                 run[j] = 0
-
+        # for each involved agent in that row, if it is faulty,
+        # add its healthy probability to the probability of a trace
+        # turning out ok
+        trace_success_probability = 1.0
+        for j in range(len(run[:-1])):
+            if run[j] == 1 and j in F:
+                trace_success_probability *= (1-afp)
+        rnd = random.random()
+        if rnd > trace_success_probability:
+            run[-1] = 1
     return S
 
 def write_data_to_excel(data):
@@ -94,6 +100,7 @@ def write_data_to_excel(data):
         {'header': 'instance_number'},
         {'header': 'noa'},
         {'header': 'nof'},
+        {'header': 'afp'},
         {'header': 'nor'},
         {'header': 'noi'},
         {'header': 'oracle'},
@@ -133,31 +140,35 @@ def write_data_to_excel(data):
     worksheet.add_table(0, 0, len(data), len(columns) - 1, {'data': data, 'columns': columns})
     workbook.close()
 
-def run_random_experiments(number_of_agents, number_of_faulty, number_of_runs, number_of_instances):
+def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_probabilities, number_of_runs, number_of_instances):
     results = []
     noa_l = len(number_of_agents)
     nof_l = len(number_of_faulty)
+    afp_l = len(agent_fault_probabilities)
     nor_l = len(number_of_runs)
     noi_l = number_of_instances
-    total_instances = noa_l * nof_l * nor_l * noi_l
+    total_instances = noa_l * nof_l * afp_l * nor_l * noi_l
     for noa_i, noa in enumerate(number_of_agents):
         G = create_random_graph(noa)
         for nof_i, nof in enumerate(number_of_faulty):
             F = choose_faulty_agents(noa_l, nof)
             F.sort()
-            for nor_i, nor in enumerate(number_of_runs):
-                for inum in range(number_of_instances):
-                    instance_num = noa_i * (nof_l * nor_l * noi_l) + nof_i * (nor_l * noi_l) + nor_i * noi_l + inum + 1
-                    T = generate_traces(G, noa, nor)
-                    S = generate_spectrum(noa, nor, F, T)
-                    print(f'running instance {instance_num}/{total_instances} ({inum+1}/{number_of_instances}) with:')
-                    print(f'        - number of agents: {noa} ({noa_i+1})')
-                    print(f'        - number of faulty agents: {nof} ({nof_i+1})')
-                    print(f'        - number of runs: {nor} ({nor_i+1})')
-                    result_mrsd = algorithms.MRSD(instance_num, noa, nof, nor, inum + 1, G, F, T, S)
-                    result_dmrsd1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, nor, inum + 1, G, F, T, S)
-                    results += result_mrsd
-                    results += result_dmrsd1
+            for afp_i, afp in enumerate(agent_fault_probabilities):
+                for nor_i, nor in enumerate(number_of_runs):
+                    for inum in range(number_of_instances):
+                        instance_num = noa_i * (nof_l * afp_l * nor_l * noi_l) + nof_i * (afp_l * nor_l * noi_l) + afp_i * (nor_l * noi_l) + nor_i * noi_l + inum + 1
+                        T = generate_traces(G, noa, nor)
+                        S = generate_spectrum(noa, nor, afp, F, T)
+                        print(f'running instance {instance_num}/{total_instances} ({inum+1}/{number_of_instances}) with:')
+                        print(f'        - number of agents: {noa} ({noa_i+1}/{noa_l})')
+                        print(f'        - number of faulty agents: {nof} ({nof_i+1}/{nof_l})')
+                        print(f'        - agent fault probability: {afp} ({afp_i+1}/{afp_l})')
+                        print(f'        - number of runs: {nor} ({nor_i + 1}/{nor_l})')
+                        result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
+                        result_dmrsd1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
+                        results += result_mrsd
+                        results += result_dmrsd1
+
     write_data_to_excel(results)
     print(9)
 
@@ -166,6 +177,6 @@ if __name__ == '__main__':
     print('Hi, PyCharm')
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
-    run_random_experiments([7, 8, 9], [2], [10], 10)
+    run_random_experiments([7, 8, 9], [2], [0.9], [10], 10)
 
     print('Bye, PyCharm')
