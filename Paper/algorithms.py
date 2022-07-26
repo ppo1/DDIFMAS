@@ -46,12 +46,17 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
                str(F),
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'MRSD',
+               -1,
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
                len(ranked_diagnoses),
                -1,
                -1,
                -1,
+               -11,
+               -11,
+               -11,
+               -11,
                wasted_effort]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])
@@ -82,10 +87,12 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     print(f'        - number of runs: {nor}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
-    local_spectra = methods_for_input_preprocess.input_preprocess_1(noa, S)
+    local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm, collect diagnosis messages count
-    diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_1(local_spectra)
+    diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean,\
+        revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
+        revealed_information_percent_last = methods_for_diagnosis.diagnosis_1(local_spectra, missing_information_cells)
     print(f'diagnoses are: {diagnoses}')
 
     # rank the diagnoses - can choose the step size for the gradient descent
@@ -107,12 +114,19 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
                str(F),
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'DMRSD_I1D1R1',
+               str(missing_information_cells),
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
                len(ranked_diagnoses),
                info_sent_diagnosis,
                info_sent_ranking,
                info_sent_diagnosis + info_sent_ranking,
+               revealed_information_sum,
+               revealed_information_mean,
+               str(revealed_information_per_agent),
+               revealed_information_last,
+               str(revealed_information_percent_per_agent),
+               revealed_information_percent_last,
                wasted_effort]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])

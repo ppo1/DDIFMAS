@@ -338,3 +338,19 @@ def precision_recall_for_diagnosis(diagnosed_agents, diagnosed_healthy_agents, o
     else:
         recall = (tp + 0.0) / float(tp + fn)
     return precision, recall
+
+def reveal_information(diagnoses, number_of_agents):
+    # conflict-diagnosis duality:
+    # Stern, Roni Tzvi, et al.
+    # "Exploring the duality in conflict-directed model-based diagnosis."
+    # Twenty-Sixth AAAI Conference on Artificial Intelligence. 2012.
+    revealed_information_table = []
+    diags = copy.deepcopy(diagnoses)
+    conflicts = conflict_directed_search(diags)
+    for conf in conflicts:
+        row = [0 for _ in range(number_of_agents+1)]
+        for c in conf:
+            row[c] = 1
+        row[-1] = 1
+        revealed_information_table.append(row)
+    return revealed_information_table

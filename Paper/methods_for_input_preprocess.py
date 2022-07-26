@@ -17,4 +17,13 @@ def input_preprocess_1(noa, S):
                 for j in range(len(row)):
                     local_spectra[a][i][j] = S[i][j]
 
-    return local_spectra
+    # calculate for each spectrum the number of missing rows
+    missing_information_cells = []
+    for ls in local_spectra:
+        missing_cells = 0
+        for row in ls:
+            if 2 in row:
+                missing_cells += len(row)
+        missing_information_cells.append(missing_cells)
+
+    return local_spectra, missing_information_cells
