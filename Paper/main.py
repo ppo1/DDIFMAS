@@ -172,9 +172,11 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                         print(f'        - agent fault probability: {afp} ({afp_i+1}/{afp_l})')
                         print(f'        - number of runs: {nor} ({nor_i + 1}/{nor_l})')
                         result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
-                        result_dmrsd1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
+                        result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
+                        result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
                         results += result_mrsd
-                        results += result_dmrsd1
+                        results += result_dmrsdI1D1R1
+                        results += result_dmrsdI1D2R1
 
     write_data_to_excel(results)
     print(9)

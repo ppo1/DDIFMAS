@@ -1,7 +1,14 @@
-from Paper import methods_for_diagnosis, methods_for_input_preprocess
+from Paper import methods_for_diagnosis, methods_for_input_preprocess, algorithms
 
+instance_num = 5
 noa = 7
-
+nof = 2
+afp = 0.5
+nor = 10
+inum = 4
+G = []
+F = [0, 1]
+T = []
 S = [
     [1, 1, 1, 1, 0, 1, 1, 1],
     [1, 1, 0, 1, 1, 0, 1, 1],
@@ -15,11 +22,7 @@ S = [
     [0, 1, 0, 0, 0, 1, 0, 0]
 ]
 
-# prepare inputs: divide the spectrum to local spectra - one for each agent
-local_spectra, missing_row_numbers = methods_for_input_preprocess.input_preprocess_1(noa, S)
-
-# run the algorithm, collect diagnosis messages count
-diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean,\
-        revealed_information_mean_per_agent, revealed_information_last = methods_for_diagnosis.diagnosis_1(local_spectra)
+# result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
+result_dmrsdI1D1R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
 
 print(9)
