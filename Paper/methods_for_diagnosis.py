@@ -1,4 +1,5 @@
 import copy
+import random
 
 from Paper import functions
 
@@ -125,6 +126,8 @@ def diagnosis_1(local_spectra, missing_information_cells):
 
 
 def pass_lowest_cardinality_D2(diagnoses):
+    if len(diagnoses) == 0:
+        return []
     lowest_cardinality = min([len(d) for d in diagnoses])
     lowest_cardinality_diagnoses = [copy.deepcopy(d) for d in diagnoses if len(d) == lowest_cardinality]
     return lowest_cardinality_diagnoses
@@ -236,6 +239,89 @@ def diagnosis_2(local_spectra, missing_information_cells):
 
         # selecting which diagnoses to pass on
         passed_diagnoses = pass_lowest_cardinality_D2(diagnoses)
+        print(f'agent {a} sends to agent {a + 1} the diagnoses {passed_diagnoses}')
+
+    # sort diagnoses
+    for d in passed_diagnoses:
+        d.sort()
+    diagnoses_sorted = functions.sort_diagnoses_by_cardinality(passed_diagnoses)
+
+    # calculate sum, mean, and last agent revealed information based on the tables
+    revealed_information_sum, revealed_information_mean, revealed_information_mean_per_agent, \
+        revealed_information_last, revealed_information_percent_per_agent, revealed_information_percent_last \
+        = calculate_revealed_information_metrics_D2(revealed_information_tables, local_spectra, missing_information_cells)
+
+    return diagnoses_sorted, information_sent, revealed_information_sum, revealed_information_mean, \
+        revealed_information_mean_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
+        revealed_information_percent_last
+
+def pass_one_of_the_lowest_cardinality_D3(diagnoses):
+    if len(diagnoses) == 0:
+        return []
+    lowest_cardinality = min([len(d) for d in diagnoses])
+    lowest_cardinality_diagnoses = [copy.deepcopy(d) for d in diagnoses if len(d) == lowest_cardinality]
+    random.shuffle(lowest_cardinality_diagnoses)
+    one_of_the_lowest_cardinality_diagnoses = lowest_cardinality_diagnoses[:1]
+    return one_of_the_lowest_cardinality_diagnoses
+
+def diagnosis_3(local_spectra, missing_information_cells):
+    """
+    go over the agents, each agent computes the diagnoses it can
+    with the information it has and then passes only one of the lowest
+    cardinality diagnoses to the next agent (this is decided randomally)
+    :param local_spectra: the local spectra of the agents
+    :param missing_information_cells: for metric gathering purposes
+    :return: a set of diagnoses
+    """
+    information_sent = 0
+    revealed_information_tables = []
+    diagnoses_per_agent = []
+    passed_diagnoses = []
+    number_of_agents = len(local_spectra)
+    for a in range(number_of_agents):
+        print(f'agent {a} computes diagnoses given passed diagnosis set {passed_diagnoses}')
+        information_sent += len(passed_diagnoses)
+        local_spectrum = local_spectra[a]
+
+        # reveal information given the diagnoses from the previous agents
+        revealed_information_table = functions.reveal_information(passed_diagnoses, number_of_agents)
+        refined_revealed_information_table = refine_revealed_information_table_D2(revealed_information_table)
+        revealed_information_tables.append(refined_revealed_information_table)
+
+        # calculate conflicts
+        conflicts = []
+        for i, row in enumerate(local_spectrum):
+            if row[-1] == 1:
+                conf = [j for j, aj in enumerate(row[:-1]) if aj == 1]
+                conflicts.append(conf)
+
+        # calculate local diagnoses
+        local_diagnoses = functions.conflict_directed_search(conflicts)
+        print(f'local diagnosis set for agent {a}: {local_diagnoses}')
+
+        # join the previous diagnoses to create a conflict set of diagnoses
+        conflicts_of_diagnoses = [passed_diagnoses, local_diagnoses]
+
+        # create united conflict set by labeling every diagnosis to a number
+        labelled_conflicts_of_diagnoses, d_diag_to_num, d_num_to_diag = functions.label_diagnosis_sets(
+            conflicts_of_diagnoses)
+
+        # filter out empty conflicts
+        labelled_conflicts_of_diagnoses = functions.filter_empty(labelled_conflicts_of_diagnoses)
+
+        # calculate raw united diagnoses
+        diagnoses_raw = functions.conflict_directed_search(labelled_conflicts_of_diagnoses)
+
+        # translate back the the united diagnoses
+        diagnoses_translated = functions.labels_to_diagnoses(diagnoses_raw, d_num_to_diag)
+
+        # refining diagnoses by unifying them, removing duplicates, and removing supersets, and storing them
+        diagnoses = functions.refine_diagnoses(diagnoses_translated)
+        diagnoses_per_agent.append(copy.deepcopy(diagnoses))
+        print(f'combined diagnosis set for agent {a}: {diagnoses}')
+
+        # selecting which diagnoses to pass on
+        passed_diagnoses = pass_one_of_the_lowest_cardinality_D3(diagnoses)
         print(f'agent {a} sends to agent {a + 1} the diagnoses {passed_diagnoses}')
 
     # sort diagnoses

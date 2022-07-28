@@ -174,9 +174,11 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                         result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
                         result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
                         result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
+                        result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
                         results += result_mrsd
                         results += result_dmrsdI1D1R1
                         results += result_dmrsdI1D2R1
+                        results += result_dmrsdI1D3R1
 
     write_data_to_excel(results)
     print(9)
@@ -186,6 +188,6 @@ if __name__ == '__main__':
     print('Hi, PyCharm')
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
-    run_random_experiments([7], [2], [0.5], [10], 10)
+    run_random_experiments([7], [2], [0.1, 0.3, 0.5, 0.7, 0.9], [20], 10)
 
     print('Bye, PyCharm')
