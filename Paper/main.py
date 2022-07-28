@@ -68,6 +68,12 @@ def generate_traces(G, noa, nor):
         T.append(trace)
     return T
 
+def no_failing_rows(S):
+    for row in S:
+        if row[-1] == 1:
+            return False
+    return True
+
 def generate_spectrum(noa, nor, afp, F, T):
     # create an empty (with 2's) spectrum
     S = [[2 for _ in range(noa + 1)] for _ in range(nor)]
@@ -166,6 +172,9 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                         instance_num = noa_i * (nof_l * afp_l * nor_l * noi_l) + nof_i * (afp_l * nor_l * noi_l) + afp_i * (nor_l * noi_l) + nor_i * noi_l + inum + 1
                         T = generate_traces(G, noa, nor)
                         S = generate_spectrum(noa, nor, afp, F, T)
+                        while no_failing_rows(S):
+                            T = generate_traces(G, noa, nor)
+                            S = generate_spectrum(noa, nor, afp, F, T)
                         print(f'running instance {instance_num}/{total_instances} ({inum+1}/{number_of_instances}) with:')
                         print(f'        - number of agents: {noa} ({noa_i+1}/{noa_l})')
                         print(f'        - number of faulty agents: {nof} ({nof_i+1}/{nof_l})')
@@ -174,11 +183,11 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                         result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
                         result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
                         result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
-                        result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
+                        # result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
                         results += result_mrsd
                         results += result_dmrsdI1D1R1
                         results += result_dmrsdI1D2R1
-                        results += result_dmrsdI1D3R1
+                        # results += result_dmrsdI1D3R1
 
     write_data_to_excel(results)
     print(9)
@@ -188,6 +197,6 @@ if __name__ == '__main__':
     print('Hi, PyCharm')
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
-    run_random_experiments([7], [2], [0.1, 0.3, 0.5, 0.7, 0.9], [20], 10)
+    run_random_experiments([12], [3], [0.1, 0.3, 0.5, 0.7, 0.9], [10], 30)
 
     print('Bye, PyCharm')
