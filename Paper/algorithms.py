@@ -3,7 +3,7 @@ import math
 from Paper import methods_for_input_preprocess, methods_for_diagnosis, methods_for_ranking, functions
 
 
-def MRSD(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
+def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -11,9 +11,7 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     :param afp: agent fault probability
     :param nor: number of runs
     :param inum: instance number
-    :param G: graph
     :param F: faulty agents
-    :param T: traces
     :param S: spectrum
     :return:
     """
@@ -25,13 +23,16 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     print(f'        - number of runs: {nor}')
 
     # run the algorithm
+    print(f'MRSD:: running diagnoses')
     diagnoses = methods_for_diagnosis.diagnosis_0(S)
+    print(f'MRSD:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses (diagnoses are normalized!) - can choose the step size for the gradient descent
+    print(f'MRSD:: running ranking')
     ranked_diagnoses = methods_for_ranking.ranking_0(S, diagnoses, 0.5)
-
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
+    print(f'MRSD:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
@@ -67,7 +68,7 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
 
     return result
 
-def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
+def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -75,9 +76,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     :param afp: agent fault probability
     :param nor: number of runs
     :param inum: instance number
-    :param G: graph
     :param F: faulty agents
-    :param T: traces
     :param S: spectrum
     :return:
     """
@@ -92,16 +91,18 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm, collect diagnosis messages count
+    print(f'DMRSD_I1D1R1:: running diagnoses')
     diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean,\
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last = methods_for_diagnosis.diagnosis_1(local_spectra, missing_information_cells)
-    print(f'diagnoses are: {diagnoses}')
+    print(f'DMRSD_I1D1R1:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses - can choose the step size for the gradient descent
+    print(f'DMRSD_I1D1R1:: running ranking')
     ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
-
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
+    print(f'DMRSD_I1D1R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
@@ -137,7 +138,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
 
     return result
 
-def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
+def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -145,9 +146,7 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     :param afp: agent fault probability
     :param nor: number of runs
     :param inum: instance number
-    :param G: graph
     :param F: faulty agents
-    :param T: traces
     :param S: spectrum
     :return:
     """
@@ -162,16 +161,18 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm, collect diagnosis messages count
+    print(f'DMRSD_I1D2R1:: running diagnoses')
     diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last = methods_for_diagnosis.diagnosis_2(local_spectra, missing_information_cells)
-    print(f'diagnoses are: {diagnoses}')
+    print(f'DMRSD_I1D2R1:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses - can choose the step size for the gradient descent
+    print(f'DMRSD_I1D2R1:: running ranking')
     ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
-
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
+    print(f'DMRSD_I1D2R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
@@ -207,7 +208,7 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
 
     return result
 
-def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
+def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, F, S):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -215,9 +216,7 @@ def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     :param afp: agent fault probability
     :param nor: number of runs
     :param inum: instance number
-    :param G: graph
     :param F: faulty agents
-    :param T: traces
     :param S: spectrum
     :return:
     """
@@ -232,16 +231,18 @@ def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, G, F, T, S):
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm, collect diagnosis messages count
+    print(f'DMRSD_I1D3R1:: running diagnoses')
     diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last = methods_for_diagnosis.diagnosis_3(local_spectra, missing_information_cells)
-    print(f'diagnoses are: {diagnoses}')
+    print(f'DMRSD_I1D3R1:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses - can choose the step size for the gradient descent
+    print(f'DMRSD_I1D3R1:: running ranking')
     ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
-
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
+    print(f'DMRSD_I1D3R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)

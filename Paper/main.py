@@ -20,9 +20,9 @@ def create_random_graph(noa):
     plt.show()
     return G
 
-def choose_faulty_agents(noa_l, nof):
+def choose_faulty_agents(noa, nof):
     # generate an ordered list of the agents (their numbers)
-    F = [i for i in range(noa_l)]
+    F = [i for i in range(noa)]
     # shuffle the list
     random.shuffle(F)
     # choose the first number of faulty agents from the list to be faulty
@@ -180,14 +180,33 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                         print(f'        - number of faulty agents: {nof} ({nof_i+1}/{nof_l})')
                         print(f'        - agent fault probability: {afp} ({afp_i+1}/{afp_l})')
                         print(f'        - number of runs: {nor} ({nor_i + 1}/{nor_l})')
-                        result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
-                        result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
-                        result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
-                        # result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, G, F, T, S)
-                        results += result_mrsd
-                        results += result_dmrsdI1D1R1
-                        results += result_dmrsdI1D2R1
-                        # results += result_dmrsdI1D3R1
+                        try:
+                            result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, F, S)
+                            result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
+                            result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
+                            result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
+                            results += result_mrsd
+                            results += result_dmrsdI1D1R1
+                            results += result_dmrsdI1D2R1
+                            results += result_dmrsdI1D3R1
+                        except Exception as e:
+                            print(f'\n\n\n#####################################################################')
+                            print(f'#####################################################################')
+                            print(f'#####################################################################')
+                            print(f'########################### Exception! ##############################')
+                            print(type(e))
+                            print(e.args)
+                            print(e)
+                            print(f'instance_num: {instance_num}\n')
+                            print(f'noa: {noa}\n')
+                            print(f'nof: {nof}\n')
+                            print(f'afp: {afp}\n')
+                            print(f'nor: {nor}\n')
+                            print(f'inum + 1: {inum + 1}\n')
+                            print(f'F: {F}\n')
+                            Sstring = ',\r\n'.join(list(map(lambda arr: str(arr), S)))
+                            print(f'S:\n{Sstring}\n')
+                            raise
 
     write_data_to_excel(results)
     print(9)
@@ -197,6 +216,6 @@ if __name__ == '__main__':
     print('Hi, PyCharm')
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
-    run_random_experiments([12], [3], [0.1, 0.3, 0.5, 0.7, 0.9], [10], 30)
+    run_random_experiments([12], [4], [0.1, 0.3, 0.5, 0.7, 0.9], [10], 30)
 
     print('Bye, PyCharm')

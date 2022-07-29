@@ -68,7 +68,7 @@ def ranking_0(spectrum, diagnoses, step):
         #   if condition is is reached, abort
         #   calculate gradients
         #   update H
-        print(f'ranking diagnosis: {diagnosis}')
+        print(f'diagnosis {diagnosis} ranking...')
 
         # initialize H values of the agents involved in the diagnosis to 0.5
         H = {}
@@ -109,7 +109,7 @@ def ranking_0(spectrum, diagnoses, step):
             # print(H)
 
         ranked_diagnoses.append([diagnosis, likelihood, H])
-        print(f'finished ranking diagnosis: {diagnosis}, rank: [{diagnosis},{likelihood}]')
+        print(f'diagnosis {diagnosis} rank: [{diagnosis},{likelihood}]')
 
     # normalize the diagnosis probabilities
     normalized_diagnoses = functions.normalize_diagnoses(ranked_diagnoses)
@@ -189,7 +189,7 @@ def ranking_1(local_spectra, diagnoses, step):
         #   if condition is is reached, abort
         #   calculate gradients
         #   update H
-        print(f'ranking diagnosis: {diagnosis}')
+        print(f'diagnosis {diagnosis} ranking...')
 
         # initialize H values of the agents involved in the diagnosis to 0.5
         H = {}
@@ -231,7 +231,7 @@ def ranking_1(local_spectra, diagnoses, step):
             # print(H)
 
         ranked_diagnoses.append([diagnosis, likelihood, H])
-        print(f'finished ranking diagnosis: {diagnosis}, rank: [{diagnosis},{likelihood}]')
+        print(f'diagnosis {diagnosis} rank: [{diagnosis},{likelihood}]')
     # normalize the diagnosis probabilities
     normalized_diagnoses = functions.normalize_diagnoses(ranked_diagnoses)
     return normalized_diagnoses, information_sent

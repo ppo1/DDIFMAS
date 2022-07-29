@@ -188,9 +188,9 @@ def sort_diagnoses_by_cardinality(diagnoses):
 
 def estimation_and_derivative_functions(h, spectrum, diagnosis):
     # estimation function
-    ef = 1
+    ef = sympy.Integer(1)
     for row in spectrum:
-        row_comp = 1
+        row_comp = sympy.Integer(1)
         for fa in diagnosis:
             if row[fa] == 1:
                 # row_comp += f'(h{fa})'
@@ -216,7 +216,7 @@ def local_estimation_and_derivative_functions_for_agent(h, r, a, lsa, diagnosis)
             row_comp = r[ri]
             else_having = []
         else:           # the case where the row is visible
-            row_comp = 1
+            row_comp = sympy.Integer(1)
             for fa in diagnosis:
                 if row[fa] == 1:
                     # row_comp += f'(h{fa})'
@@ -234,12 +234,12 @@ def local_estimation_and_derivative_functions_for_agent(h, r, a, lsa, diagnosis)
         local_table.append(le_tab_row)
 
     # global partial estimation function
-    gpef = 1
+    gpef = sympy.Integer(1)
     for row in local_table:
         gpef = gpef * row[0]
 
     # local estimation function
-    lef = 1
+    lef = sympy.Integer(1)
     for row in local_table:
         if row[0] not in r:
             lef = lef * row[0]
