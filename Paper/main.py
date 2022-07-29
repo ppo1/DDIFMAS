@@ -126,6 +126,9 @@ def write_data_to_excel(data):
         {'header': 'Revealed Information - Percent Per Agent'},
         {'header': 'Revealed Information - Percent Last'},
         {'header': 'Wasted Effort'},
+        {'header': 'Wasted Effort Percent'},
+        {'header': 'Useful Effort'},
+        {'header': 'Useful Effort Percent'},
         {'header': 'Weighted Precision 10'},
         {'header': 'Weighted Precision 20'},
         {'header': 'Weighted Precision 30'},
@@ -216,6 +219,6 @@ if __name__ == '__main__':
     print('Hi, PyCharm')
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
-    run_random_experiments([12], [4], [0.1, 0.3, 0.5, 0.7, 0.9], [10], 30)
+    run_random_experiments([12], [4], [0.1, 0.3], [10], 10)
 
     print('Bye, PyCharm')

@@ -283,23 +283,27 @@ def normalize_diagnoses(ranked_diagnoses):
         diagnosis[1] = diagnosis[1] / probabilities_sum
     return normalized_diagnoses
 
-def calculate_wasted_effort(F, diagnoses):
+def calculate_wasted_effort(number_of_agents, oracle, diagnoses):
+    healthy_agents = [a for a in list(range(number_of_agents)) if a not in oracle]
     agents_examined = []
     faulty_agents_examined = []
     healthy_agents_examined = []
     for diagnosis in diagnoses:
-        if len(faulty_agents_examined) == len(F):
+        if len(faulty_agents_examined) == len(oracle):
             break
         d_agents = diagnosis[0]
         for a in d_agents:
             if a not in agents_examined:
                 agents_examined.append(a)
-                if a in F:
+                if a in oracle:
                     faulty_agents_examined.append(a)
                 else:
                     healthy_agents_examined.append(a)
     wasted_effort = len(healthy_agents_examined)
-    return wasted_effort
+    wasted_effort_percent = wasted_effort * 1.0 / len(healthy_agents)
+    useful_effort = len(faulty_agents_examined)
+    useful_effort_percent = useful_effort * 1.0 / len(oracle)
+    return wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent
 
 def calculate_weighted_precision_and_recall(number_of_agents, oracle, diagnoses):
     top_k_precision_accums = [0 for _ in diagnoses]

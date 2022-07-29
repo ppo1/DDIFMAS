@@ -35,7 +35,8 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
     print(f'MRSD:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
-    wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
+    wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
+        functions.calculate_wasted_effort(noa, F, ranked_diagnoses)
     weighted_precision, weighted_recall = functions.calculate_weighted_precision_and_recall(noa, F, ranked_diagnoses)
 
     result = [[instance_num,
@@ -54,13 +55,16 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
                -1,
                -1,
                -1,
-               -11,
-               -11,
-               -11,
-               -11,
-               -11,
-               -11,
-               wasted_effort]]
+               -1,
+               -1,
+               -1,
+               -1,
+               -1,
+               -1,
+               wasted_effort,
+               wasted_effort_percent,
+               useful_effort,
+               useful_effort_percent]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])
     for k in range(10, 110, 10):
@@ -105,7 +109,8 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S):
     print(f'DMRSD_I1D1R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
-    wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
+    wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
+        functions.calculate_wasted_effort(noa, F, ranked_diagnoses)
     weighted_precision, weighted_recall = functions.calculate_weighted_precision_and_recall(noa, F, ranked_diagnoses)
 
     result = [[instance_num,
@@ -130,7 +135,10 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S):
                revealed_information_last,
                str(revealed_information_percent_per_agent),
                revealed_information_percent_last,
-               wasted_effort]]
+               wasted_effort,
+               wasted_effort_percent,
+               useful_effort,
+               useful_effort_percent]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])
     for k in range(10, 110, 10):
@@ -175,7 +183,8 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S):
     print(f'DMRSD_I1D2R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
-    wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
+    wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
+        functions.calculate_wasted_effort(noa, F, ranked_diagnoses)
     weighted_precision, weighted_recall = functions.calculate_weighted_precision_and_recall(noa, F, ranked_diagnoses)
 
     result = [[instance_num,
@@ -200,7 +209,10 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S):
                revealed_information_last,
                str(revealed_information_percent_per_agent),
                revealed_information_percent_last,
-               wasted_effort]]
+               wasted_effort,
+               wasted_effort_percent,
+               useful_effort,
+               useful_effort_percent]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100) - 1])
     for k in range(10, 110, 10):
@@ -245,7 +257,8 @@ def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, F, S):
     print(f'DMRSD_I1D3R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
-    wasted_effort = functions.calculate_wasted_effort(F, ranked_diagnoses)
+    wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
+        functions.calculate_wasted_effort(noa, F, ranked_diagnoses)
     weighted_precision, weighted_recall = functions.calculate_weighted_precision_and_recall(noa, F, ranked_diagnoses)
 
     result = [[instance_num,
@@ -270,7 +283,10 @@ def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, F, S):
                revealed_information_last,
                str(revealed_information_percent_per_agent),
                revealed_information_percent_last,
-               wasted_effort]]
+               wasted_effort,
+               wasted_effort_percent,
+               useful_effort,
+               useful_effort_percent]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100) - 1])
     for k in range(10, 110, 10):
