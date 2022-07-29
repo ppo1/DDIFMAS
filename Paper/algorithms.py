@@ -1,6 +1,6 @@
 import math
 
-from Paper import methods_for_input_preprocess, methods_for_diagnosis, methods_for_ranking, functions
+import methods_for_input_preprocess, methods_for_diagnosis, methods_for_ranking, functions
 
 
 def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):

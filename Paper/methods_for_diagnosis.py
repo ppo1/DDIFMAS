@@ -1,7 +1,7 @@
 import copy
 import random
 
-from Paper import functions
+import functions
 
 
 def diagnosis_0(spectrum):

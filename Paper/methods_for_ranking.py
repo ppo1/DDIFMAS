@@ -1,6 +1,6 @@
 import copy
 
-from Paper import functions
+import functions
 import sympy
 
 # def ranking_0(spectrum, diagnoses):

@@ -2,7 +2,7 @@ import random
 import matplotlib.pyplot as plt
 import xlsxwriter
 import networkx as nx
-from Paper import algorithms
+import algorithms
 import numpy as np
 from random import randrange
 

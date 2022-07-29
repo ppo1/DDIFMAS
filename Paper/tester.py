@@ -1,4 +1,4 @@
-from Paper import methods_for_diagnosis, methods_for_input_preprocess, algorithms
+import methods_for_diagnosis, methods_for_input_preprocess, algorithms
 
 instance_num = 5
 noa = 7
