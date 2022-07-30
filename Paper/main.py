@@ -1,4 +1,6 @@
 import random
+from datetime import datetime
+
 import matplotlib.pyplot as plt
 import xlsxwriter
 import networkx as nx
@@ -156,7 +158,8 @@ def write_data_to_excel(data):
     worksheet.add_table(0, 0, len(data), len(columns) - 1, {'data': data, 'columns': columns})
     workbook.close()
 
-def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_probabilities, number_of_runs, number_of_instances):
+def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_probabilities, number_of_runs, number_of_instances, s_time):
+    t_report = []
     results = []
     noa_l = len(number_of_agents)
     nof_l = len(number_of_faulty)
@@ -166,6 +169,7 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
     total_instances = noa_l * nof_l * afp_l * nor_l * noi_l
     for noa_i, noa in enumerate(number_of_agents):
         G = create_random_graph(noa)
+        result_rows = 0
         for nof_i, nof in enumerate(number_of_faulty):
             F = choose_faulty_agents(noa, nof)
             F.sort()
@@ -189,9 +193,13 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                             result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             results += result_mrsd
+                            result_rows += 1
                             results += result_dmrsdI1D1R1
+                            result_rows += 1
                             results += result_dmrsdI1D2R1
+                            result_rows += 1
                             results += result_dmrsdI1D3R1
+                            result_rows += 1
                         except Exception as e:
                             print(f'\n\n\n#####################################################################')
                             print(f'#####################################################################')
@@ -210,15 +218,33 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                             Sstring = ',\r\n'.join(list(map(lambda arr: str(arr), S)))
                             print(f'S:\n{Sstring}\n')
                             raise
-
+        e_time = datetime.now()
+        d = e_time - s_time
+        t_report.append(f'number of agents {noa}: {result_rows} rows, {d}')
+        s_time = datetime.now()
     write_data_to_excel(results)
     print(9)
+    return t_report
 
 
 if __name__ == '__main__':
-    print('Hi, PyCharm')
+    print('Hi, DDIFMAS pipeline!')
+
+    start_time = datetime.now()
+
+    number_of_agents_list = [10, 11,  12]
+    number_of_faulty_list = [4]
+    agent_fault_probabilities_list = [0.3]
+    number_of_runs_list = [10]
+    number_of_instances_list = 10
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
-    run_random_experiments([12], [4], [0.1, 0.3], [10], 10)
+    time_report = run_random_experiments(number_of_agents_list, number_of_faulty_list, agent_fault_probabilities_list,
+                                         number_of_runs_list, number_of_instances_list, start_time)
 
-    print('Bye, PyCharm')
+    end_time = datetime.now()
+    delta = end_time - start_time
+    print(',\r\n'.join(list(map(lambda arr: str(arr), time_report))))
+    print(f'time to finish: {delta}')
+
+    print('Bye, DDIFMAS Pipeline!')
