@@ -232,9 +232,9 @@ if __name__ == '__main__':
 
     start_time = datetime.now()
 
-    number_of_agents_list = [10, 11,  12]
-    number_of_faulty_list = [4]
-    agent_fault_probabilities_list = [0.3]
+    number_of_agents_list = [6, 7, 8, 9, 10, 11, 12, 13]
+    number_of_faulty_list = [1, 2, 3, 4, 5]
+    agent_fault_probabilities_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     number_of_runs_list = [10]
     number_of_instances_list = 10
 
