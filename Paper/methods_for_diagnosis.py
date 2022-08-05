@@ -118,12 +118,12 @@ def diagnosis_1(local_spectra, missing_information_cells):
     diagnoses_sorted = functions.sort_diagnoses_by_cardinality(passed_diagnoses)
 
     # calculate sum, mean, and last agent revealed information based on the tables
-    revealed_information_sum, revealed_information_mean, revealed_information_mean_per_agent, \
+    revealed_information_sum, revealed_information_mean, revealed_information_per_agent, \
         revealed_information_last, revealed_information_percent_per_agent, revealed_information_percent_last \
         = calculate_revealed_information_metrics_D1(revealed_information_tables, local_spectra, missing_information_cells)
 
     return diagnoses_sorted, information_sent, revealed_information_sum, revealed_information_mean, \
-        revealed_information_mean_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
+        revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last
 
 
@@ -249,12 +249,12 @@ def diagnosis_2(local_spectra, missing_information_cells):
     diagnoses_sorted = functions.sort_diagnoses_by_cardinality(passed_diagnoses)
 
     # calculate sum, mean, and last agent revealed information based on the tables
-    revealed_information_sum, revealed_information_mean, revealed_information_mean_per_agent, \
+    revealed_information_sum, revealed_information_mean, revealed_information_per_agent, \
         revealed_information_last, revealed_information_percent_per_agent, revealed_information_percent_last \
         = calculate_revealed_information_metrics_D2(revealed_information_tables, local_spectra, missing_information_cells)
 
     return diagnoses_sorted, information_sent, revealed_information_sum, revealed_information_mean, \
-        revealed_information_mean_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
+        revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last
 
 def pass_one_of_the_lowest_cardinality_D3(diagnoses):
@@ -332,10 +332,20 @@ def diagnosis_3(local_spectra, missing_information_cells):
     diagnoses_sorted = functions.sort_diagnoses_by_cardinality(passed_diagnoses)
 
     # calculate sum, mean, and last agent revealed information based on the tables
-    revealed_information_sum, revealed_information_mean, revealed_information_mean_per_agent, \
+    revealed_information_sum, revealed_information_mean, revealed_information_per_agent, \
         revealed_information_last, revealed_information_percent_per_agent, revealed_information_percent_last \
         = calculate_revealed_information_metrics_D2(revealed_information_tables, local_spectra, missing_information_cells)
 
     return diagnoses_sorted, information_sent, revealed_information_sum, revealed_information_mean, \
-        revealed_information_mean_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
+        revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last
+
+def diagnosis_4(spectra):
+    """
+    because this is a single fault diagnosis,
+    the result is |A| single agent diagnoses,
+    one for each agent
+    :param spectra: the spectra
+    :return: list of single diagnoses
+    """
+    return [[j] for j in range(len(spectra))], 0

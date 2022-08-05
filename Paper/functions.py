@@ -2,6 +2,8 @@ import copy
 # from typing import List, Callable
 # from scipy.optimize import minimize
 # import numpy as np
+import math
+
 import sympy
 
 
@@ -358,3 +360,17 @@ def reveal_information(diagnoses, number_of_agents):
         row[-1] = 1
         revealed_information_table.append(row)
     return revealed_information_table
+
+
+def single_fault_ochiai(n11, n10, n01, n00):
+    """
+    ochiai
+                                     n11
+                result = -----------------------------
+                             ______________________
+                           \/ (n11+n10) * (n11+n01)
+
+    """
+    # soj = ((dm[0][j] * 1.0) / math.sqrt((dm[0][j] + dm[1][j]) * (dm[0][j] + dm[2][j]))) if dm[0][j] != 0 else 0
+    result = n11 * 1.0 / math.sqrt((n11+n10) * (n11+n01))
+    return result

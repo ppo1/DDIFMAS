@@ -188,10 +188,13 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                         print(f'        - agent fault probability: {afp} ({afp_i+1}/{afp_l})')
                         print(f'        - number of runs: {nor} ({nor_i + 1}/{nor_l})')
                         try:
+                            result_dcoefI1D4R2 = algorithms.DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
+                            results += result_dcoefI1D4R2
+                            result_rows += 1
                             results += result_mrsd
                             result_rows += 1
                             results += result_dmrsdI1D1R1

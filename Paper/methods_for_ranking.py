@@ -235,3 +235,112 @@ def ranking_1(local_spectra, diagnoses, step):
     # normalize the diagnosis probabilities
     normalized_diagnoses = functions.normalize_diagnoses(ranked_diagnoses)
     return normalized_diagnoses, information_sent
+
+
+def request_data_R2(requesting_agent, helping_agent, helping_spectrum):
+    new_not_in_fault, new_not_in_ok = 0, 0
+
+    for row in helping_spectrum:
+        if 2 not in row:  # helping agent can help here
+            if row[requesting_agent] == 1:  # requesting agent doesnt need help here
+                continue
+            else:
+                if 1 in row[:helping_agent]:  # some previous agent (in the row before helping agent) already helped
+                    continue
+                else:  # no other previous agent has seen this row, helping agent needs to help
+                    if row[-1] == 1:
+                        new_not_in_fault += 1
+                    else:
+                        new_not_in_ok += 1
+
+    return new_not_in_fault, new_not_in_ok
+
+def reveal_information_for_single(num_of_agents, new_not_in_fault, new_not_in_ok, j, i):
+    revealed_information_table = []
+    for k in range(new_not_in_fault):
+        row = [2 for ag in range(num_of_agents+1)]
+        row[j] = 0
+        row[i] = 1
+        row[-1] = 1
+        revealed_information_table.append(row)
+
+    for k in range(new_not_in_ok):
+        row = [2 for ag in range(num_of_agents+1)]
+        row[j] = 0
+        row[i] = 1
+        row[-1] = 0
+        revealed_information_table.append(row)
+    return revealed_information_table
+
+def calculate_revealed_information_metrics_R2(revealed_information_tables, missing_information_cells):
+    # for each revealed row it goes like this:
+    # each row contributes 3 revealed information
+    revealed_information_sum, revealed_information_mean, revealed_information_per_agent = 0, 0.0, []
+    revealed_information_percent_per_agent = []
+
+    for ai, atab in enumerate(revealed_information_tables):
+        revealed_information_a = 0
+        for conf in atab:
+            revealed_information_a += 3
+        revealed_information_sum += revealed_information_a
+        revealed_information_per_agent.append(revealed_information_a)
+        revealed_information_percent_per_agent.append(revealed_information_a * 1.0 / missing_information_cells[ai]) \
+            if missing_information_cells[ai] != 0 else 1.0
+    revealed_information_mean = revealed_information_sum * 1.0 / len(revealed_information_tables)
+    return revealed_information_sum, revealed_information_mean, revealed_information_per_agent, \
+        revealed_information_per_agent[-1], revealed_information_percent_per_agent, \
+        revealed_information_percent_per_agent[-1]
+
+def ranking_2(local_spectra, diagnoses, missing_information_cells):
+    """
+    ranks the diagnoses. for each diagnosis, which is essentially
+    a single fault of one of the agents, the corresponding agent
+    ranks it. to achieve this the said agents request information
+    from other agents
+    :param local_spectra: the local spectra of each agent
+    :param diagnoses: the diagnosis list
+    :param missing_information_cells: for metric gathering purposes
+    :return: ranked diagnosis list
+    """
+    information_sent = 0
+    revealed_information_tables = []
+    ranked_diagnoses = []
+    num_of_agents = len(local_spectra)
+    for j in range(num_of_agents):
+        spectrum_j = local_spectra[j]
+
+        in_fault, in_ok, not_in_fault, not_in_ok = 0, 0, 0, 0
+        for row in spectrum_j:
+            if row[j] == 1:
+                if row[-1] == 1:
+                    in_fault += 1
+                else:
+                    in_ok += 1
+
+        revealed_information_table = []
+        for i in range(num_of_agents):
+            if i != j:
+                information_sent += 1  # the agent sends a request - it is worth 1 unit
+                new_not_in_fault, new_not_in_ok = request_data_R2(j, i, local_spectra[i])
+                information_sent += 2  # the agent receives two number - those are 2 units
+                revealed_information_table_from_i = reveal_information_for_single(num_of_agents, new_not_in_fault, new_not_in_ok, j, i)
+                revealed_information_table += revealed_information_table_from_i
+                not_in_fault += new_not_in_fault
+                not_in_ok += new_not_in_ok
+        revealed_information_tables.append(revealed_information_table)
+
+        likelihood = functions.single_fault_ochiai(in_fault, in_ok, not_in_fault, not_in_ok)
+
+        ranked_diagnoses.append([diagnoses[j], likelihood, {}])
+
+    # normalize the diagnosis probabilities
+    normalized_diagnoses = functions.normalize_diagnoses(ranked_diagnoses)
+
+    # calculate sum, mean, and last agent revealed information based on the tables
+    revealed_information_sum, revealed_information_mean, revealed_information_per_agent, \
+        revealed_information_last, revealed_information_percent_per_agent, revealed_information_percent_last \
+        = calculate_revealed_information_metrics_R2(revealed_information_tables, missing_information_cells)
+
+    return normalized_diagnoses, information_sent, revealed_information_sum, revealed_information_mean, \
+        revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
+        revealed_information_percent_last

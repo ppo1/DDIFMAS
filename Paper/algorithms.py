@@ -1,7 +1,84 @@
 import math
 
-import methods_for_input_preprocess, methods_for_diagnosis, methods_for_ranking, functions
+import functions
+import methods_for_diagnosis
+import methods_for_input_preprocess
+import methods_for_ranking
 
+
+def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S):
+    """
+    :param instance_num: instance number for indexing of experiments
+    :param noa: number of agents
+    :param nof: number of faulty agents
+    :param afp: agent fault probability
+    :param nor: number of runs
+    :param inum: instance number
+    :param F: faulty agents
+    :param S: spectrum
+    :return:
+    """
+    # announcing instance parameters
+    print(f'running DCOEF on {instance_num} ({inum}) with:')
+    print(f'        - number of agents: {noa}')
+    print(f'        - number of faulty agents: {nof}')
+    print(f'        - agent fault probability: {afp}')
+    print(f'        - number of runs: {nor}')
+
+    # prepare inputs: divide the spectrum to local spectra - one for each agent
+    local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
+
+    # run the algorithm
+    print(f'DCOEF_I1D4R2:: running diagnoses')
+    diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_4(local_spectra)
+    print(f'DCOEF_I1D4R2:: diagnoses are: {diagnoses}')
+
+    # rank the diagnoses - collect sent and revealed information in the process
+    print(f'DCOEF_I1D4R2:: running ranking')
+    ranked_diagnoses, info_sent_ranking, revealed_information_sum, revealed_information_mean,\
+        revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
+        revealed_information_percent_last = methods_for_ranking.ranking_2(local_spectra, diagnoses, missing_information_cells)
+    # sort the diagnoses according to their rank descending
+    ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
+    print(f'DCOEF_I1D4R2:: ranked diagnoses are: {ranked_diagnoses}')
+
+    # calculate wasted effort, weighted precision, weighted recall
+    wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
+        functions.calculate_wasted_effort(noa, F, ranked_diagnoses)
+    weighted_precision, weighted_recall = functions.calculate_weighted_precision_and_recall(noa, F, ranked_diagnoses)
+
+    result = [[instance_num,
+               noa,
+               nof,
+               afp,
+               nor,
+               inum,
+               str(F),
+               '\r\n'.join(list(map(lambda arr: str(arr), S))),
+               'DCOEF_I1D4R2',
+               str(missing_information_cells),
+               '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
+               '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
+               len(ranked_diagnoses),
+               info_sent_diagnosis,
+               info_sent_ranking,
+               info_sent_diagnosis + info_sent_ranking,
+               revealed_information_sum,
+               revealed_information_mean,
+               str(revealed_information_per_agent),
+               revealed_information_last,
+               str(revealed_information_percent_per_agent),
+               revealed_information_percent_last,
+               wasted_effort,
+               wasted_effort_percent,
+               useful_effort,
+               useful_effort_percent]]
+    for k in range(10, 110, 10):
+        result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100) - 1])
+    for k in range(10, 110, 10):
+        result[0].append(weighted_recall[math.ceil(len(weighted_recall) * float(k) / 100) - 1])
+
+    return result
 
 def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
     """
