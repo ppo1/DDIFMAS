@@ -75,7 +75,7 @@ def diagnosis_1(local_spectra, missing_information_cells):
     passed_diagnoses = []
     number_of_agents = len(local_spectra)
     for a in range(number_of_agents):
-        print(f'{a}   passed diagnoses: {passed_diagnoses}')
+        # print(f'{a}   passed diagnoses: {passed_diagnoses}')
         information_sent += len(passed_diagnoses)
         local_spectrum = local_spectra[a]
 
@@ -93,7 +93,7 @@ def diagnosis_1(local_spectra, missing_information_cells):
 
         # calculate local diagnoses
         local_diagnoses = functions.conflict_directed_search(conflicts)
-        print(f'{a}    local diagnoses: {local_diagnoses}')
+        # print(f'{a}    local diagnoses: {local_diagnoses}')
 
         # join the previous diagnoses to create a conflict set of diagnoses
         conflicts_of_diagnoses = [passed_diagnoses, local_diagnoses]
@@ -114,11 +114,11 @@ def diagnosis_1(local_spectra, missing_information_cells):
         # refining diagnoses by unifying them, removing duplicates, and removing supersets, and storing them
         diagnoses = functions.refine_diagnoses(diagnoses_translated)
         diagnoses_per_agent.append(copy.deepcopy(diagnoses))
-        print(f'{a} combined diagnoses: {diagnoses}')
+        # print(f'{a} combined diagnoses: {diagnoses}')
 
         # selecting which diagnoses to pass on
         passed_diagnoses = diagnoses
-        print(f'{a}     sent diagnoses: {passed_diagnoses}')
+        # print(f'{a}     sent diagnoses: {passed_diagnoses}')
 
     # sort diagnoses
     for d in passed_diagnoses:
@@ -206,7 +206,7 @@ def diagnosis_2(local_spectra, missing_information_cells):
     passed_diagnoses = []
     number_of_agents = len(local_spectra)
     for a in range(number_of_agents):
-        print(f'{a}   passed diagnoses: {passed_diagnoses}')
+        # print(f'{a}   passed diagnoses: {passed_diagnoses}')
         information_sent += len(passed_diagnoses)
         local_spectrum = local_spectra[a]
 
@@ -224,7 +224,7 @@ def diagnosis_2(local_spectra, missing_information_cells):
 
         # calculate local diagnoses
         local_diagnoses = functions.conflict_directed_search(conflicts)
-        print(f'{a}    local diagnoses: {local_diagnoses}')
+        # print(f'{a}    local diagnoses: {local_diagnoses}')
 
         # join the previous diagnoses to create a conflict set of diagnoses
         conflicts_of_diagnoses = [passed_diagnoses, local_diagnoses]
@@ -245,11 +245,11 @@ def diagnosis_2(local_spectra, missing_information_cells):
         # refining diagnoses by unifying them, removing duplicates, and removing supersets, and storing them
         diagnoses = functions.refine_diagnoses(diagnoses_translated)
         diagnoses_per_agent.append(copy.deepcopy(diagnoses))
-        print(f'{a} combined diagnoses: {diagnoses}')
+        # print(f'{a} combined diagnoses: {diagnoses}')
 
         # selecting which diagnoses to pass on
         passed_diagnoses = pass_lowest_cardinality_D2(diagnoses)
-        print(f'{a}     sent diagnoses: {passed_diagnoses}')
+        # print(f'{a}     sent diagnoses: {passed_diagnoses}')
 
     # sort diagnoses
     for d in passed_diagnoses:
@@ -289,7 +289,7 @@ def diagnosis_3(local_spectra, missing_information_cells):
     passed_diagnoses = []
     number_of_agents = len(local_spectra)
     for a in range(number_of_agents):
-        print(f'{a}   passed diagnoses: {passed_diagnoses}')
+        # print(f'{a}   passed diagnoses: {passed_diagnoses}')
         information_sent += len(passed_diagnoses)
         local_spectrum = local_spectra[a]
 
@@ -307,7 +307,7 @@ def diagnosis_3(local_spectra, missing_information_cells):
 
         # calculate local diagnoses
         local_diagnoses = functions.conflict_directed_search(conflicts)
-        print(f'{a}    local diagnoses: {local_diagnoses}')
+        # print(f'{a}    local diagnoses: {local_diagnoses}')
 
         # join the previous diagnoses to create a conflict set of diagnoses
         conflicts_of_diagnoses = [passed_diagnoses, local_diagnoses]
@@ -328,11 +328,11 @@ def diagnosis_3(local_spectra, missing_information_cells):
         # refining diagnoses by unifying them, removing duplicates, and removing supersets, and storing them
         diagnoses = functions.refine_diagnoses(diagnoses_translated)
         diagnoses_per_agent.append(copy.deepcopy(diagnoses))
-        print(f'{a} combined diagnoses: {diagnoses}')
+        # print(f'{a} combined diagnoses: {diagnoses}')
 
         # selecting which diagnoses to pass on
         passed_diagnoses = pass_one_of_the_lowest_cardinality_D3(diagnoses)
-        print(f'{a}     sent diagnoses: {passed_diagnoses}')
+        # print(f'{a}     sent diagnoses: {passed_diagnoses}')
 
     # sort diagnoses
     for d in passed_diagnoses:
