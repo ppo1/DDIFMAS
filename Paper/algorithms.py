@@ -5,6 +5,74 @@ import methods_for_diagnosis
 import methods_for_input_preprocess
 import methods_for_ranking
 
+def COEF(instance_num, noa, nof, afp, nor, inum, F, S):
+    """
+    :param instance_num: instance number for indexing of experiments
+    :param noa: number of agents
+    :param nof: number of faulty agents
+    :param afp: agent fault probability
+    :param nor: number of runs
+    :param inum: instance number
+    :param F: faulty agents
+    :param S: spectrum
+    :return:
+    """
+    # announcing instance parameters
+    print(f'running COEF on {instance_num} ({inum}) with:')
+    print(f'        - number of agents: {noa}')
+    print(f'        - number of faulty agents: {nof}')
+    print(f'        - agent fault probability: {afp}')
+    print(f'        - number of runs: {nor}')
+
+    # run the algorithm
+    print(f'COEF:: running diagnoses')
+    diagnoses = methods_for_diagnosis.diagnosis_coef_0(S)
+    print(f'COEF:: diagnoses are: {diagnoses}')
+
+    # rank the diagnoses (diagnoses are normalized!) - can choose the step size for the gradient descent
+    print(f'COEF:: running ranking')
+    ranked_diagnoses = methods_for_ranking.ranking_coef_0(S, diagnoses)
+    # sort the diagnoses according to their rank descending
+    ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
+    print(f'COEF:: ranked diagnoses are: {ranked_diagnoses}')
+
+    # calculate wasted effort, weighted precision, weighted recall
+    wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
+        functions.calculate_wasted_effort(noa, F, ranked_diagnoses)
+    weighted_precision, weighted_recall = functions.calculate_weighted_precision_and_recall(noa, F, ranked_diagnoses)
+
+    result = [[instance_num,
+               noa,
+               nof,
+               afp,
+               nor,
+               inum,
+               str(F),
+               '\r\n'.join(list(map(lambda arr: str(arr), S))),
+               'COEF',
+               -1,
+               '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
+               '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
+               len(ranked_diagnoses),
+               -1,
+               -1,
+               -1,
+               -1,
+               -1,
+               -1,
+               -1,
+               -1,
+               -1,
+               wasted_effort,
+               wasted_effort_percent,
+               useful_effort,
+               useful_effort_percent]]
+    for k in range(10, 110, 10):
+        result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100) - 1])
+    for k in range(10, 110, 10):
+        result[0].append(weighted_recall[math.ceil(len(weighted_recall) * float(k) / 100) - 1])
+
+    return result
 
 def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S):
     """

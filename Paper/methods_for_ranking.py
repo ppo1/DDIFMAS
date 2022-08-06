@@ -344,3 +344,28 @@ def ranking_2(local_spectra, diagnoses, missing_information_cells):
     return normalized_diagnoses, information_sent, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last
+
+
+def ranking_coef_0(S, diagnoses):
+    ranked_diagnoses = []
+    num_of_agents = len(diagnoses)
+    for j in range(num_of_agents):
+        in_fault, in_ok, not_in_fault, not_in_ok = 0, 0, 0, 0
+        for row in S:
+            if row[j] == 1:
+                if row[-1] == 1:
+                    in_fault += 1
+                else:
+                    in_ok += 1
+            else:
+                if row[-1] == 1:
+                    not_in_fault += 1
+                else:
+                    not_in_ok += 1
+        likelihood = functions.single_fault_ochiai(in_fault, in_ok, not_in_fault, not_in_ok)
+        ranked_diagnoses.append([diagnoses[j], likelihood, {}])
+
+    # normalize the diagnosis probabilities
+    normalized_diagnoses = functions.normalize_diagnoses(ranked_diagnoses)
+
+    return normalized_diagnoses

@@ -188,11 +188,14 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                         print(f'        - agent fault probability: {afp} ({afp_i+1}/{afp_l})')
                         print(f'        - number of runs: {nor} ({nor_i + 1}/{nor_l})')
                         try:
+                            result_coef = algorithms.COEF(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_dcoefI1D4R2 = algorithms.DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
                             result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, F, S)
+                            results += result_coef
+                            result_rows += 1
                             results += result_dcoefI1D4R2
                             result_rows += 1
                             results += result_mrsd
@@ -235,9 +238,9 @@ if __name__ == '__main__':
 
     start_time = datetime.now()
 
-    number_of_agents_list = [6, 7, 8, 9, 10, 11, 12, 13]
-    number_of_faulty_list = [1, 2, 3, 4, 5]
-    agent_fault_probabilities_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    number_of_agents_list = [6]
+    number_of_faulty_list = [2]
+    agent_fault_probabilities_list = [0.3]
     number_of_runs_list = [10]
     number_of_instances_list = 10
 

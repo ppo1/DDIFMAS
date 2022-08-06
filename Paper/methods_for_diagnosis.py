@@ -349,3 +349,14 @@ def diagnosis_4(spectra):
     :return: list of single diagnoses
     """
     return [[j] for j in range(len(spectra))], 0
+
+
+def diagnosis_coef_0(S):
+    """
+    because this is a single fault diagnosis,
+    the result is |A| single agent diagnoses,
+    one for each agent
+    :param S: the spectrum
+    :return: list of single diagnoses
+    """
+    return [[j] for j in range(len(S[0][:-1]))]
