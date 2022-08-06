@@ -249,10 +249,10 @@ if __name__ == '__main__':
 
     start_time = datetime.now()
 
-    number_of_agents_list = [10]
-    number_of_faulty_list = [5]
-    agent_fault_probabilities_list = [0.4]
-    number_of_runs_list = [50]
+    number_of_agents_list = [6, 10]
+    number_of_faulty_list = [2, 5]
+    agent_fault_probabilities_list = [0.1, 0.4]
+    number_of_runs_list = [10, 30, 50]
     number_of_instances_list = 10
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
