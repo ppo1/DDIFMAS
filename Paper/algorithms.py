@@ -24,9 +24,12 @@ def COEF(instance_num, noa, nof, afp, nor, inum, F, S):
     print(f'        - agent fault probability: {afp}')
     print(f'        - number of runs: {nor}')
 
+    # prepare inputs: divide the spectrum to local spectra - one for each agent
+    local_spectra, _ = methods_for_input_preprocess.input_preprocess_1(noa, S)
+
     # run the algorithm
     print(f'COEF:: running diagnoses')
-    diagnoses = methods_for_diagnosis.diagnosis_coef_0(S)
+    diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_coef_0(S, local_spectra)
     print(f'COEF:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses (diagnoses are normalized!) - can choose the step size for the gradient descent
@@ -50,19 +53,30 @@ def COEF(instance_num, noa, nof, afp, nor, inum, F, S):
                str(F),
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'COEF',
-               -1,
+               str([len(S) * len(S[0])]),
+               str([0]),
+               str([0.0]),
+               0,
+               0.0,
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
                len(ranked_diagnoses),
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
+               info_sent_diagnosis,
+               0,
+               info_sent_diagnosis,
+               str([len(S) * len(S[0])]),
+               str([1.0]),
+               str([1.0]),
+               len(S) * len(S[0]),
+               len(S) * len(S[0]),
+               len(S) * len(S[0]),
+               1.0,
+               str([len(S) * len(S[0])]),
+               str([1.0]),
+               len(S) * len(S[0]),
+               1.0,
+               len(S) * len(S[0]),
+               1.0,
                wasted_effort,
                wasted_effort_percent,
                useful_effort,
@@ -125,18 +139,32 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S):
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'DCOEF_I1D4R2',
                str(missing_information_cells),
+               str([len(S)*len(S[0]) - item for item in missing_information_cells]),
+               str([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
+               max([len(S) * len(S[0]) - item for item in missing_information_cells]),
+               max([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
                len(ranked_diagnoses),
                info_sent_diagnosis,
                info_sent_ranking,
                info_sent_diagnosis + info_sent_ranking,
+               str(revealed_information_per_agent),
+               str([item * 1.0 / (len(S) * len(S[0])) for item in revealed_information_per_agent]),
+               str(revealed_information_percent_per_agent),
                revealed_information_sum,
                revealed_information_mean,
-               str(revealed_information_per_agent),
                revealed_information_last,
-               str(revealed_information_percent_per_agent),
                revealed_information_percent_last,
+               str([len(S)*len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in enumerate(missing_information_cells)]),
+               str([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item in
+                    enumerate(missing_information_cells)]),
+               max([len(S)*len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in enumerate(missing_information_cells)]),
+               max([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item in
+                    enumerate(missing_information_cells)]),
+               max([len(S)*len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in enumerate(missing_information_cells)]) - max([len(S) * len(S[0]) - item for item in missing_information_cells]),
+               max([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in enumerate(missing_information_cells)]) - max([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
                wasted_effort,
                wasted_effort_percent,
                useful_effort,
@@ -167,9 +195,12 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
     print(f'        - agent fault probability: {afp}')
     print(f'        - number of runs: {nor}')
 
+    # prepare inputs: divide the spectrum to local spectra - one for each agent
+    local_spectra, _ = methods_for_input_preprocess.input_preprocess_1(noa, S)
+
     # run the algorithm
     print(f'MRSD:: running diagnoses')
-    diagnoses = methods_for_diagnosis.diagnosis_0(S)
+    diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_0(S, local_spectra)
     print(f'MRSD:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses (diagnoses are normalized!) - can choose the step size for the gradient descent
@@ -193,19 +224,30 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
                str(F),
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'MRSD',
-               -1,
+               str([len(S) * len(S[0])]),
+               str([0]),
+               str([0.0]),
+               0,
+               0.0,
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
                len(ranked_diagnoses),
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
-               -1,
+               info_sent_diagnosis,
+               0,
+               info_sent_diagnosis,
+               str([len(S) * len(S[0])]),
+               str([1.0]),
+               str([1.0]),
+               len(S) * len(S[0]),
+               len(S) * len(S[0]),
+               len(S) * len(S[0]),
+               1.0,
+               str([len(S) * len(S[0])]),
+               str([1.0]),
+               len(S) * len(S[0]),
+               1.0,
+               len(S) * len(S[0]),
+               1.0,
                wasted_effort,
                wasted_effort_percent,
                useful_effort,
@@ -268,18 +310,39 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S):
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'DMRSD_I1D1R1',
                str(missing_information_cells),
+               str([len(S) * len(S[0]) - item for item in missing_information_cells]),
+               str([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
+               max([len(S) * len(S[0]) - item for item in missing_information_cells]),
+               max([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
                len(ranked_diagnoses),
                info_sent_diagnosis,
                info_sent_ranking,
                info_sent_diagnosis + info_sent_ranking,
+               str(revealed_information_per_agent),
+               str([item * 1.0 / (len(S) * len(S[0])) for item in revealed_information_per_agent]),
+               str(revealed_information_percent_per_agent),
                revealed_information_sum,
                revealed_information_mean,
-               str(revealed_information_per_agent),
                revealed_information_last,
-               str(revealed_information_percent_per_agent),
                revealed_information_percent_last,
+               str([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]),
+               str([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in
+                    enumerate(missing_information_cells)]),
+               max([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]),
+               max([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in
+                    enumerate(missing_information_cells)]),
+               max([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]) - max(
+                   [len(S) * len(S[0]) - item for item in missing_information_cells]),
+               max([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in enumerate(missing_information_cells)]) - max(
+                   [(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
                wasted_effort,
                wasted_effort_percent,
                useful_effort,
@@ -342,18 +405,39 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S):
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'DMRSD_I1D2R1',
                str(missing_information_cells),
+               str([len(S) * len(S[0]) - item for item in missing_information_cells]),
+               str([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
+               max([len(S) * len(S[0]) - item for item in missing_information_cells]),
+               max([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
                len(ranked_diagnoses),
                info_sent_diagnosis,
                info_sent_ranking,
                info_sent_diagnosis + info_sent_ranking,
+               str(revealed_information_per_agent),
+               str([item * 1.0 / (len(S) * len(S[0])) for item in revealed_information_per_agent]),
+               str(revealed_information_percent_per_agent),
                revealed_information_sum,
                revealed_information_mean,
-               str(revealed_information_per_agent),
                revealed_information_last,
-               str(revealed_information_percent_per_agent),
                revealed_information_percent_last,
+               str([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]),
+               str([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in
+                    enumerate(missing_information_cells)]),
+               max([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]),
+               max([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in
+                    enumerate(missing_information_cells)]),
+               max([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]) - max(
+                   [len(S) * len(S[0]) - item for item in missing_information_cells]),
+               max([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in enumerate(missing_information_cells)]) - max(
+                   [(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
                wasted_effort,
                wasted_effort_percent,
                useful_effort,
@@ -416,18 +500,39 @@ def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, F, S):
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
                'DMRSD_I1D3R1',
                str(missing_information_cells),
+               str([len(S) * len(S[0]) - item for item in missing_information_cells]),
+               str([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
+               max([len(S) * len(S[0]) - item for item in missing_information_cells]),
+               max([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
                '\r\n'.join(list(map(lambda arr: str(arr), diagnoses))),
                '\r\n'.join(list(map(lambda arr: str(arr), ranked_diagnoses))),
                len(ranked_diagnoses),
                info_sent_diagnosis,
                info_sent_ranking,
                info_sent_diagnosis + info_sent_ranking,
+               str(revealed_information_per_agent),
+               str([item * 1.0 / (len(S) * len(S[0])) for item in revealed_information_per_agent]),
+               str(revealed_information_percent_per_agent),
                revealed_information_sum,
                revealed_information_mean,
-               str(revealed_information_per_agent),
                revealed_information_last,
-               str(revealed_information_percent_per_agent),
                revealed_information_percent_last,
+               str([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]),
+               str([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in
+                    enumerate(missing_information_cells)]),
+               max([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]),
+               max([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in
+                    enumerate(missing_information_cells)]),
+               max([len(S) * len(S[0]) - item + revealed_information_per_agent[ix] for ix, item in
+                    enumerate(missing_information_cells)]) - max(
+                   [len(S) * len(S[0]) - item for item in missing_information_cells]),
+               max([(len(S) * len(S[0]) - item + revealed_information_per_agent[ix]) / (len(S) * len(S[0])) for ix, item
+                    in enumerate(missing_information_cells)]) - max(
+                   [(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
                wasted_effort,
                wasted_effort_percent,
                useful_effort,

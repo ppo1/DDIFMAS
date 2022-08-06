@@ -4,12 +4,20 @@ import random
 import functions
 
 
-def diagnosis_0(spectrum):
+def diagnosis_0(spectrum, local_spectra):
     """
     the traditional hitting set algorithm
+    :param local_spectra: for calculating information sent
     :param spectrum: the local spectra of the agents
     :return: a set of diagnoses
     """
+    info_sent_diagnosis = 0
+    for ls in local_spectra:
+        for row in ls:
+            for c in row:
+                if c == 0 or c == 1:
+                    info_sent_diagnosis += 1
+
     # calculate conflicts
     conflicts = []
     for i, row in enumerate(spectrum):
@@ -24,7 +32,7 @@ def diagnosis_0(spectrum):
     for d in diagnoses:
         d.sort()
     diagnoses_sorted = functions.sort_diagnoses_by_cardinality(diagnoses)
-    return diagnoses_sorted
+    return diagnoses_sorted, info_sent_diagnosis
 
 
 def refine_revealed_information_table_D1(revealed_information_table):
@@ -45,8 +53,8 @@ def calculate_revealed_information_metrics_D1(revealed_information_tables, local
                 revealed_information_a += len(conf)
         revealed_information_sum += revealed_information_a
         revealed_information_per_agent.append(revealed_information_a)
-        revealed_information_percent_per_agent.append(revealed_information_a * 1.0 / missing_information_cells[ai]) \
-            if missing_information_cells[ai] != 0 else 1.0
+        revealed_information_percent_per_agent.append(revealed_information_a * 1.0 / missing_information_cells[ai]
+                                                      if missing_information_cells[ai] != 0 else 0.0)
     revealed_information_mean = revealed_information_sum * 1.0 / len(revealed_information_tables)
     return revealed_information_sum, revealed_information_mean, revealed_information_per_agent, \
         revealed_information_per_agent[-1], revealed_information_percent_per_agent, \
@@ -175,8 +183,8 @@ def calculate_revealed_information_metrics_D2(revealed_information_tables, local
                 revealed_information_a += len([c for c in conf if c == 1])
         revealed_information_sum += revealed_information_a
         revealed_information_per_agent.append(revealed_information_a)
-        revealed_information_percent_per_agent.append(revealed_information_a * 1.0 / missing_information_cells[ai]) \
-            if missing_information_cells[ai] != 0 else 1.0
+        revealed_information_percent_per_agent.append(revealed_information_a * 1.0 / missing_information_cells[ai]
+                                                      if missing_information_cells[ai] != 0 else 0.0)
     revealed_information_mean = revealed_information_sum * 1.0 / len(revealed_information_tables)
     return revealed_information_sum, revealed_information_mean, revealed_information_per_agent, \
         revealed_information_per_agent[-1], revealed_information_percent_per_agent, \
@@ -351,12 +359,19 @@ def diagnosis_4(spectra):
     return [[j] for j in range(len(spectra))], 0
 
 
-def diagnosis_coef_0(S):
+def diagnosis_coef_0(S, local_spectra):
     """
     because this is a single fault diagnosis,
     the result is |A| single agent diagnoses,
     one for each agent
+    :param local_spectra: for calculating information sent
     :param S: the spectrum
     :return: list of single diagnoses
     """
-    return [[j] for j in range(len(S[0][:-1]))]
+    info_sent_diagnosis = 0
+    for ls in local_spectra:
+        for row in ls:
+            for c in row:
+                if c == 0 or c == 1:
+                    info_sent_diagnosis += 1
+    return [[j] for j in range(len(S[0][:-1]))], info_sent_diagnosis

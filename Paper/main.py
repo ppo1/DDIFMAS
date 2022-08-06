@@ -115,18 +115,29 @@ def write_data_to_excel(data):
         {'header': 'spectrum'},
         {'header': 'diagnosis algorithm'},
         {'header': 'Missing Information (cells)'},
+        {'header': 'Known Information Before (cells)'},
+        {'header': 'Known Information Before % (cells)'},
+        {'header': 'Known Information Before - Highest (cells)'},
+        {'header': 'Known Information Before - Highest % (cells)'},
         {'header': 'diagnoses'},
         {'header': 'ranked diagnoses'},
         {'header': 'number of diagnoses'},
         {'header': 'Sent Information - Diagnosis'},
         {'header': 'Sent Information - Ranking'},
         {'header': 'Sent Information - Both'},
+        {'header': 'Revealed Information (cells)'},
+        {'header': 'Revealed Information % (cells)'},
+        {'header': 'Revealed Information % of Missing (cells)'},
         {'header': 'Revealed Information - Sum'},
         {'header': 'Revealed Information - Mean'},
-        {'header': 'Revealed Information - Per Agent'},
-        {'header': 'Revealed Information - Last'},
-        {'header': 'Revealed Information - Percent Per Agent'},
-        {'header': 'Revealed Information - Percent Last'},
+        {'header': 'Revealed Information - Last (cells)'},
+        {'header': '---------- Revealed Information - Last % (cells)'},
+        {'header': 'Known Information After (cells)'},
+        {'header': 'Known Information After % (cells)'},
+        {'header': 'Known Information After - Highest (cells)'},
+        {'header': 'Known Information After - Highest % (cells)'},
+        {'header': 'Critical Information Revealed (cells)'},
+        {'header': 'Critical Information Revealed % (cells)'},
         {'header': 'Wasted Effort'},
         {'header': 'Wasted Effort Percent'},
         {'header': 'Useful Effort'},
@@ -238,10 +249,10 @@ if __name__ == '__main__':
 
     start_time = datetime.now()
 
-    number_of_agents_list = [6]
-    number_of_faulty_list = [2]
-    agent_fault_probabilities_list = [0.3]
-    number_of_runs_list = [10]
+    number_of_agents_list = [10]
+    number_of_faulty_list = [5]
+    agent_fault_probabilities_list = [0.4]
+    number_of_runs_list = [50]
     number_of_instances_list = 10
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)

@@ -284,8 +284,8 @@ def calculate_revealed_information_metrics_R2(revealed_information_tables, missi
             revealed_information_a += 3
         revealed_information_sum += revealed_information_a
         revealed_information_per_agent.append(revealed_information_a)
-        revealed_information_percent_per_agent.append(revealed_information_a * 1.0 / missing_information_cells[ai]) \
-            if missing_information_cells[ai] != 0 else 1.0
+        revealed_information_percent_per_agent.append(revealed_information_a * 1.0 / missing_information_cells[ai]
+                                                      if missing_information_cells[ai] != 0 else 0.0)
     revealed_information_mean = revealed_information_sum * 1.0 / len(revealed_information_tables)
     return revealed_information_sum, revealed_information_mean, revealed_information_per_agent, \
         revealed_information_per_agent[-1], revealed_information_percent_per_agent, \
