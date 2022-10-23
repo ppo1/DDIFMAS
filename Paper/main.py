@@ -125,6 +125,7 @@ def write_data_to_excel(data):
         {'header': 'Sent Information - Diagnosis'},
         {'header': 'Sent Information - Ranking'},
         {'header': 'Sent Information - Both'},
+        {'header': 'Sent Information avg agent - Both'},
         {'header': 'Revealed Information (cells)'},
         {'header': 'Revealed Information % (cells)'},
         {'header': 'Revealed Information % of Missing (cells)'},
@@ -142,6 +143,7 @@ def write_data_to_excel(data):
         {'header': 'Wasted Effort Percent'},
         {'header': 'Useful Effort'},
         {'header': 'Useful Effort Percent'},
+        {'header': 'Runtime'},
         {'header': 'Weighted Precision 10'},
         {'header': 'Weighted Precision 20'},
         {'header': 'Weighted Precision 30'},
@@ -249,11 +251,17 @@ if __name__ == '__main__':
 
     start_time = datetime.now()
 
-    number_of_agents_list = [6, 10]
-    number_of_faulty_list = [2, 5]
-    agent_fault_probabilities_list = [0.1, 0.4]
-    number_of_runs_list = [10, 30, 50]
-    number_of_instances_list = 10
+    # number_of_agents_list = [6, 7, 8, 9, 10, 11, 12, 13]
+    # number_of_faulty_list = [1, 2, 3, 4, 5]
+    # agent_fault_probabilities_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    # number_of_runs_list = [10, 20, 30, 40, 50]
+    # number_of_instances_list = 30
+
+    number_of_agents_list = [8]
+    number_of_faulty_list = [5]
+    agent_fault_probabilities_list = [0.9]
+    number_of_runs_list = [50]
+    number_of_instances_list = 30
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
     time_report = run_random_experiments(number_of_agents_list, number_of_faulty_list, agent_fault_probabilities_list,
