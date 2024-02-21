@@ -7,7 +7,12 @@ import methods_for_ranking
 
 import time
 
-def COEF(instance_num, noa, nof, afp, nor, inum, F, S):
+def print_if(verbose, s):
+    if verbose:
+        print(s) 
+
+# single centralized
+def COEF(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -20,32 +25,32 @@ def COEF(instance_num, noa, nof, afp, nor, inum, F, S):
     :return:
     """
     # announcing instance parameters
-    print(f'running COEF on {instance_num} ({inum}) with:')
-    print(f'        - number of agents: {noa}')
-    print(f'        - number of faulty agents: {nof}')
-    print(f'        - agent fault probability: {afp}')
-    print(f'        - number of runs: {nor}')
+    print_if(verbose, f'running COEF on {instance_num} ({inum}) with:')
+    print_if(verbose, f'        - number of agents: {noa}')
+    print_if(verbose, f'        - number of faulty agents: {nof}')
+    print_if(verbose, f'        - agent fault probability: {afp}')
+    print_if(verbose, f'        - number of runs: {nor}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra, _ = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm
-    print(f'COEF:: running diagnoses')
+    print_if(verbose, f'COEF:: running diagnoses')
     t0 = time.time()
     diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_coef_0(S, local_spectra)
     t1 = time.time()
     delta_diag = t1 - t0
-    print(f'COEF:: diagnoses are: {diagnoses}')
+    print_if(verbose, f'COEF:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses (diagnoses are normalized!) - can choose the step size for the gradient descent
-    print(f'COEF:: running ranking')
+    print_if(verbose, f'COEF:: running ranking')
     t2 = time.time()
     ranked_diagnoses = methods_for_ranking.ranking_coef_0(S, diagnoses)
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
     delta_rank = t3 - t2
-    print(f'COEF:: ranked diagnoses are: {ranked_diagnoses}')
+    print_if(verbose, f'COEF:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
@@ -98,7 +103,8 @@ def COEF(instance_num, noa, nof, afp, nor, inum, F, S):
 
     return result
 
-def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S):
+# single distributed
+def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -111,25 +117,25 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S):
     :return:
     """
     # announcing instance parameters
-    print(f'running DCOEF on {instance_num} ({inum}) with:')
-    print(f'        - number of agents: {noa}')
-    print(f'        - number of faulty agents: {nof}')
-    print(f'        - agent fault probability: {afp}')
-    print(f'        - number of runs: {nor}')
+    print_if(verbose, f'running DCOEF on {instance_num} ({inum}) with:')
+    print_if(verbose, f'        - number of agents: {noa}')
+    print_if(verbose, f'        - number of faulty agents: {nof}')
+    print_if(verbose, f'        - agent fault probability: {afp}')
+    print_if(verbose, f'        - number of runs: {nor}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm
-    print(f'DCOEF_I1D4R2:: running diagnoses')
+    print_if(verbose, f'DCOEF_I1D4R2:: running diagnoses')
     t0 = time.time()
     diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_4(local_spectra)
     t1 = time.time()
     delta_diag = t1 - t0
-    print(f'DCOEF_I1D4R2:: diagnoses are: {diagnoses}')
+    print_if(verbose, f'DCOEF_I1D4R2:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses - collect sent and revealed information in the process
-    print(f'DCOEF_I1D4R2:: running ranking')
+    print_if(verbose, f'DCOEF_I1D4R2:: running ranking')
     t2 = time.time()
     ranked_diagnoses, info_sent_ranking, revealed_information_sum, revealed_information_mean,\
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
@@ -138,7 +144,7 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S):
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
     delta_rank = t3 - t2
-    print(f'DCOEF_I1D4R2:: ranked diagnoses are: {ranked_diagnoses}')
+    print_if(verbose, f'DCOEF_I1D4R2:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
@@ -194,7 +200,8 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S):
 
     return result
 
-def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
+# multi centralized
+def MRSD(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -207,32 +214,32 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
     :return:
     """
     # announcing instance parameters
-    print(f'running MRSD on {instance_num} ({inum}) with:')
-    print(f'        - number of agents: {noa}')
-    print(f'        - number of faulty agents: {nof}')
-    print(f'        - agent fault probability: {afp}')
-    print(f'        - number of runs: {nor}')
+    print_if(verbose, f'running MRSD on {instance_num} ({inum}) with:')
+    print_if(verbose, f'        - number of agents: {noa}')
+    print_if(verbose, f'        - number of faulty agents: {nof}')
+    print_if(verbose, f'        - agent fault probability: {afp}')
+    print_if(verbose, f'        - number of runs: {nor}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra, _ = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm
-    print(f'MRSD:: running diagnoses')
+    print_if(verbose, f'MRSD:: running diagnoses')
     t0 = time.time()
     diagnoses, info_sent_diagnosis = methods_for_diagnosis.diagnosis_0(S, local_spectra)
     t1 = time.time()
     delta_diag = t1 - t0
-    print(f'MRSD:: diagnoses are: {diagnoses}')
+    print_if(verbose, f'MRSD:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses (diagnoses are normalized!) - can choose the step size for the gradient descent
-    print(f'MRSD:: running ranking')
+    print_if(verbose, f'MRSD:: running ranking')
     t2 = time.time()
     ranked_diagnoses = methods_for_ranking.ranking_0(S, diagnoses, 0.5)
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
     delta_rank = t3 - t2
-    print(f'MRSD:: ranked diagnoses are: {ranked_diagnoses}')
+    print_if(verbose, f'MRSD:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
@@ -285,7 +292,8 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S):
 
     return result
 
-def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S):
+# multi distributed
+def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -298,34 +306,34 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S):
     :return:
     """
     # announcing instance parameters
-    print(f'running DMRSD_I1D1R1 on {instance_num} ({inum}) with:')
-    print(f'        - number of agents: {noa}')
-    print(f'        - number of faulty agents: {nof}')
-    print(f'        - agent fault probability: {afp}')
-    print(f'        - number of runs: {nor}')
+    print_if(verbose, f'running DMRSD_I1D1R1 on {instance_num} ({inum}) with:')
+    print_if(verbose, f'        - number of agents: {noa}')
+    print_if(verbose, f'        - number of faulty agents: {nof}')
+    print_if(verbose, f'        - agent fault probability: {afp}')
+    print_if(verbose, f'        - number of runs: {nor}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm, collect diagnosis messages count
-    print(f'DMRSD_I1D1R1:: running diagnoses')
+    print_if(verbose, f'DMRSD_I1D1R1:: running diagnoses')
     t0 = time.time()
     diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean,\
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last = methods_for_diagnosis.diagnosis_1(local_spectra, missing_information_cells)
     t1 = time.time()
     delta_diag = t1 - t0
-    print(f'DMRSD_I1D1R1:: diagnoses are: {diagnoses}')
+    print_if(verbose, f'DMRSD_I1D1R1:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses - can choose the step size for the gradient descent
-    print(f'DMRSD_I1D1R1:: running ranking')
+    print_if(verbose, f'DMRSD_I1D1R1:: running ranking')
     t2 = time.time()
     ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
     delta_rank = t3 - t2
-    print(f'DMRSD_I1D1R1:: ranked diagnoses are: {ranked_diagnoses}')
+    print_if(verbose, f'DMRSD_I1D1R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
@@ -388,7 +396,8 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S):
 
     return result
 
-def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S):
+# multi-mc
+def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -401,34 +410,34 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S):
     :return:
     """
     # announcing instance parameters
-    print(f'running DMRSD_I1D2R1 on {instance_num} ({inum}) with:')
-    print(f'        - number of agents: {noa}')
-    print(f'        - number of faulty agents: {nof}')
-    print(f'        - agent fault probability: {afp}')
-    print(f'        - number of runs: {nor}')
+    print_if(verbose, f'running DMRSD_I1D2R1 on {instance_num} ({inum}) with:')
+    print_if(verbose, f'        - number of agents: {noa}')
+    print_if(verbose, f'        - number of faulty agents: {nof}')
+    print_if(verbose, f'        - agent fault probability: {afp}')
+    print_if(verbose, f'        - number of runs: {nor}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm, collect diagnosis messages count
-    print(f'DMRSD_I1D2R1:: running diagnoses')
+    print_if(verbose, f'DMRSD_I1D2R1:: running diagnoses')
     t0 = time.time()
     diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last = methods_for_diagnosis.diagnosis_2(local_spectra, missing_information_cells)
     t1 = time.time()
     delta_diag = t1 - t0
-    print(f'DMRSD_I1D2R1:: diagnoses are: {diagnoses}')
+    print_if(verbose, f'DMRSD_I1D2R1:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses - can choose the step size for the gradient descent
-    print(f'DMRSD_I1D2R1:: running ranking')
+    print_if(verbose, f'DMRSD_I1D2R1:: running ranking')
     t2 = time.time()
     ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
     delta_rank = t3 - t2
-    print(f'DMRSD_I1D2R1:: ranked diagnoses are: {ranked_diagnoses}')
+    print_if(verbose, f'DMRSD_I1D2R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
@@ -491,7 +500,8 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S):
 
     return result
 
-def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, F, S):
+# multi-smc
+def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -504,34 +514,34 @@ def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, F, S):
     :return:
     """
     # announcing instance parameters
-    print(f'running DMRSD_I1D3R1 on {instance_num} ({inum}) with:')
-    print(f'        - number of agents: {noa}')
-    print(f'        - number of faulty agents: {nof}')
-    print(f'        - agent fault probability: {afp}')
-    print(f'        - number of runs: {nor}')
+    print_if(verbose, f'running DMRSD_I1D3R1 on {instance_num} ({inum}) with:')
+    print_if(verbose, f'        - number of agents: {noa}')
+    print_if(verbose, f'        - number of faulty agents: {nof}')
+    print_if(verbose, f'        - agent fault probability: {afp}')
+    print_if(verbose, f'        - number of runs: {nor}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
 
     # run the algorithm, collect diagnosis messages count
-    print(f'DMRSD_I1D3R1:: running diagnoses')
+    print_if(verbose, f'DMRSD_I1D3R1:: running diagnoses')
     t0 = time.time()
     diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
         revealed_information_percent_last = methods_for_diagnosis.diagnosis_3(local_spectra, missing_information_cells)
     t1 = time.time()
     delta_diag = t1 - t0
-    print(f'DMRSD_I1D3R1:: diagnoses are: {diagnoses}')
+    print_if(verbose, f'DMRSD_I1D3R1:: diagnoses are: {diagnoses}')
 
     # rank the diagnoses - can choose the step size for the gradient descent
-    print(f'DMRSD_I1D3R1:: running ranking')
+    print_if(verbose, f'DMRSD_I1D3R1:: running ranking')
     t2 = time.time()
     ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
     delta_rank = t3 - t2
-    print(f'DMRSD_I1D3R1:: ranked diagnoses are: {ranked_diagnoses}')
+    print_if(verbose, f'DMRSD_I1D3R1:: ranked diagnoses are: {ranked_diagnoses}')
 
     # calculate wasted effort, weighted precision, weighted recall
     wasted_effort, wasted_effort_percent, useful_effort, useful_effort_percent = \
