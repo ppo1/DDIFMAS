@@ -104,6 +104,7 @@ def COEF(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     return result
 
 # single distributed
+# TODO: add parameter for whether to do early stopping or not
 def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     """
     :param instance_num: instance number for indexing of experiments
@@ -293,6 +294,9 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     return result
 
 # multi distributed
+# TODO: add parameter for whether to use early stopping or not
+# TODO: add parameter for alpha for using Partial-Cover
+# TODO: add parameter for whether to calculate or estimate n_j
 def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     """
     :param instance_num: instance number for indexing of experiments

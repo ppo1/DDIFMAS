@@ -182,7 +182,6 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
     nor_l = len(number_of_runs)
     noi_l = number_of_instances
     total_instances = noa_l * nof_l * afp_l * nor_l * noi_l
-    wraper = (lambda x:x) if verbose else tqdm
     with tqdm(total=total_instances) as pbar:
         for noa_i, noa in enumerate(number_of_agents):
             G = create_random_graph(noa)

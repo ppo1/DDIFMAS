@@ -60,7 +60,10 @@ def calculate_revealed_information_metrics_D1(revealed_information_tables, local
         revealed_information_per_agent[-1], revealed_information_percent_per_agent, \
         revealed_information_percent_per_agent[-1]
 
-
+# Algorithm 3
+# TODO: add n_j calculation
+# TODO: add early stopping parameter and alpha
+# TODO: add n_j estimation
 def diagnosis_1(local_spectra, missing_information_cells):
     """
     go over the agents, each agent computes the diagnoses it can

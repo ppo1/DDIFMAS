@@ -129,6 +129,8 @@ def local_estimation_and_derivative_functions(diagnosis, local_spectra):
         LF.append([local_table, gpef, lef, gpdf, ldf])
     return LF, h, r
 
+# TODO: I think this method calculates the loss and the early stopping comes here.
+#          (probably need to get the component to stop at as parameter)
 def eval_P(H, LF):
     # information sent during the evaluation of P
     information_sent_eval_P = 0
@@ -165,6 +167,8 @@ def update_h(H, Gradients, step, number_of_agents):
             H[key] = H[key] + step * Gradients[key]
     return H, information_sent_update_h
 
+# Algorithm 4
+# TODO: add early stopping parameter (probably need to get the component to stop at as parameter)
 def ranking_1(local_spectra, diagnoses, step):
     """
     ranks the diagnoses. for each diagnosis, the agents
@@ -291,6 +295,8 @@ def calculate_revealed_information_metrics_R2(revealed_information_tables, missi
         revealed_information_per_agent[-1], revealed_information_percent_per_agent, \
         revealed_information_percent_per_agent[-1]
 
+# Algorithm 1
+# TODO: add early stopping parameter
 def ranking_2(local_spectra, diagnoses, missing_information_cells):
     """
     ranks the diagnoses. for each diagnosis, which is essentially
