@@ -60,16 +60,27 @@ def calculate_revealed_information_metrics_D1(revealed_information_tables, local
         revealed_information_per_agent[-1], revealed_information_percent_per_agent, \
         revealed_information_percent_per_agent[-1]
 
+def count_first_shows(local_spectrum, component_idx):
+    n_j = 0
+    for row in local_spectrum:
+        first_participation = row.index(1) if 1 in row else None
+        if first_participation == component_idx:
+            n_j += 1
+    return n_j
+
 # Algorithm 3
 # TODO: add n_j calculation
 # TODO: add early stopping parameter and alpha
 # TODO: add n_j estimation
-def diagnosis_1(local_spectra, missing_information_cells):
+def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=True, alpha=1.0):
     """
     go over the agents, each agent computes the diagnoses it can
     with the information it has and then passes it to the next agent
     :param local_spectra: the local spectra of the agents
     :param missing_information_cells: for metric gathering purposes
+    :param nor: number of runs
+    :param early_stopping: whether to stop early
+    :param alpha: the alpha parameter for the early stopping
     :return: a set of diagnoses
     """
     information_sent = 0
@@ -77,6 +88,7 @@ def diagnosis_1(local_spectra, missing_information_cells):
     diagnoses_per_agent = []
     passed_diagnoses = []
     number_of_agents = len(local_spectra)
+    njs = []
     for a in range(number_of_agents):
         # print(f'{a}   passed diagnoses: {passed_diagnoses}')
         information_sent += len(passed_diagnoses)
@@ -84,6 +96,16 @@ def diagnosis_1(local_spectra, missing_information_cells):
 
         # reveal information given the diagnoses from the previous agents
         revealed_information_table = functions.reveal_information(passed_diagnoses, number_of_agents)
+        if early_stopping and a == 1:
+            appear_together = 0
+            for i in range(len(local_spectrum)):
+                if local_spectrum[i][0] == 1 and local_spectrum[i][1] == 1:
+                    appear_together += 1
+            extra_revield = njs[0] - appear_together
+            for i in range(extra_revield):
+                revealed_information_table.append([1])
+            print(f'{appear_together=}, {extra_revield=}, {revealed_information_table=}') 
+            print(f'{local_spectrum=}')
         refined_revealed_information_table = refine_revealed_information_table_D1(revealed_information_table)
         revealed_information_tables.append(refined_revealed_information_table)
 
@@ -122,7 +144,22 @@ def diagnosis_1(local_spectra, missing_information_cells):
         # selecting which diagnoses to pass on
         passed_diagnoses = diagnoses
         # print(f'{a}     sent diagnoses: {passed_diagnoses}')
-
+        if early_stopping:
+            if a == 0:
+                njs.append(count_first_shows(local_spectrum, a))
+            else:
+                njs.append(count_first_shows(local_spectrum, a) + njs[-1])
+            print(njs)
+            if njs[a] >= alpha * float(nor):
+                # print(f'early stopping at agent {a}. disinct_seen_runs: {njs[a]}, number of runs: {nor}')
+                # print(f'{revealed_information_tables=}')
+                break
+    if early_stopping and len(njs) < number_of_agents:
+        revealed_information_table = functions.reveal_information(passed_diagnoses, number_of_agents)
+        final_refined_revealed_information_table = refine_revealed_information_table_D1(revealed_information_table)
+    for _ in range(len(njs), number_of_agents):
+        revealed_information_tables.append(final_refined_revealed_information_table)    
+        
     # sort diagnoses
     for d in passed_diagnoses:
         d.sort()
@@ -135,7 +172,7 @@ def diagnosis_1(local_spectra, missing_information_cells):
 
     return diagnoses_sorted, information_sent, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last
+        revealed_information_percent_last, len(njs)
 
 
 def pass_lowest_cardinality_D2(diagnoses):

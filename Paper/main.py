@@ -270,7 +270,7 @@ if __name__ == '__main__':
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
     time_report = run_random_experiments(number_of_agents_list, number_of_faulty_list, agent_fault_probabilities_list,
-                                         number_of_runs_list, number_of_instances_list, start_time)
+                                         number_of_runs_list, number_of_instances_list, start_time, verbose=True)
 
     end_time = datetime.now()
     delta = end_time - start_time

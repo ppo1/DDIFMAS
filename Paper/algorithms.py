@@ -105,7 +105,7 @@ def COEF(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
 
 # single distributed
 # TODO: add parameter for whether to do early stopping or not
-def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
+def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, early_stopping=True):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -115,6 +115,8 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     :param inum: instance number
     :param F: faulty agents
     :param S: spectrum
+    :param verbose: whether to print the progress of the algorithm
+    :param early_stopping: the early stopping parameter
     :return:
     """
     # announcing instance parameters
@@ -140,7 +142,7 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     t2 = time.time()
     ranked_diagnoses, info_sent_ranking, revealed_information_sum, revealed_information_mean,\
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last = methods_for_ranking.ranking_2(local_spectra, diagnoses, missing_information_cells)
+        revealed_information_percent_last = methods_for_ranking.ranking_2(local_spectra, diagnoses, missing_information_cells, nor, early_stopping)
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
@@ -160,7 +162,7 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
                inum,
                str(F),
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
-               'DCOEF_I1D4R2',
+               f"DCOEF_I1D4R2{'_ES' if early_stopping else ''}",
                str(missing_information_cells),
                str([len(S)*len(S[0]) - item for item in missing_information_cells]),
                str([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
@@ -297,7 +299,7 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
 # TODO: add parameter for whether to use early stopping or not
 # TODO: add parameter for alpha for using Partial-Cover
 # TODO: add parameter for whether to calculate or estimate n_j
-def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
+def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, early_stopping=True, alpha=1):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -324,7 +326,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     t0 = time.time()
     diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean,\
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last = methods_for_diagnosis.diagnosis_1(local_spectra, missing_information_cells)
+        revealed_information_percent_last, stoped_component = methods_for_diagnosis.diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping, alpha)
     t1 = time.time()
     delta_diag = t1 - t0
     print_if(verbose, f'DMRSD_I1D1R1:: diagnoses are: {diagnoses}')
@@ -332,7 +334,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     # rank the diagnoses - can choose the step size for the gradient descent
     print_if(verbose, f'DMRSD_I1D1R1:: running ranking')
     t2 = time.time()
-    ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5)
+    ranked_diagnoses, info_sent_ranking = methods_for_ranking.ranking_1(local_spectra, diagnoses, 0.5, stoped_component)
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
@@ -352,7 +354,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
                inum,
                str(F),
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
-               'DMRSD_I1D1R1',
+               f'DMRSD_I1D1R1{"_ES" if early_stopping else ""}{"_A" + str(alpha) if alpha != 1 else ""}',
                str(missing_information_cells),
                str([len(S) * len(S[0]) - item for item in missing_information_cells]),
                str([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
