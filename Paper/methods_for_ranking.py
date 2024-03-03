@@ -129,15 +129,13 @@ def local_estimation_and_derivative_functions(diagnosis, local_spectra):
         LF.append([local_table, gpef, lef, gpdf, ldf])
     return LF, h, r
 
-# TODO: I think this method calculates the loss and the early stopping comes here.
-#          (probably need to get the component to stop at as parameter)
-def eval_P(H, LF, stoped_component=0):
+def eval_P(H, LF, stoped_component=-1):
     # information sent during the evaluation of P
     information_sent_eval_P = 0
     # first P calculation
     P = functions.substitute_and_eval(H, LF[0][2])
     # rest P calculations
-    stop_at = stoped_component if stoped_component != 0 else len(LF)
+    stop_at = stoped_component if stoped_component != -1 else len(LF)
     for a in range(1, len(LF)):
         information_sent_eval_P += 1
         extended_P = functions.extend_P(P, a, LF[a][0])
@@ -172,8 +170,7 @@ def update_h(H, Gradients, step, number_of_agents):
     return H, information_sent_update_h
 
 # Algorithm 4
-# TODO: add early stopping parameter (probably need to get the component to stop at as parameter)
-def ranking_1(local_spectra, diagnoses, step, stoped_component=0):
+def ranking_1(local_spectra, diagnoses, step, stoped_component=-1):
     """
     ranks the diagnoses. for each diagnosis, the agents
     compute a corresponding partial estimation function
@@ -300,7 +297,6 @@ def calculate_revealed_information_metrics_R2(revealed_information_tables, missi
         revealed_information_percent_per_agent[-1]
 
 # Algorithm 1
-# TODO: add early stopping parameter
 def ranking_2(local_spectra, diagnoses, missing_information_cells, nor, early_stopping):
     """
     ranks the diagnoses. for each diagnosis, which is essentially
@@ -318,6 +314,7 @@ def ranking_2(local_spectra, diagnoses, missing_information_cells, nor, early_st
     revealed_information_tables = []
     ranked_diagnoses = []
     num_of_agents = len(local_spectra)
+    stoped_at = -1
     for j in range(num_of_agents):
         spectrum_j = local_spectra[j]
         in_fault, in_ok, not_in_fault, not_in_ok = 0, 0, 0, 0
@@ -331,6 +328,7 @@ def ranking_2(local_spectra, diagnoses, missing_information_cells, nor, early_st
         revealed_information_table = []
         for i in range(num_of_agents):       
             if early_stopping and in_fault +  in_ok + not_in_fault + not_in_ok == nor:
+                stoped_at = i
                 break
             if i != j:
                 information_sent += 1  # the agent sends a request - it is worth 1 unit
@@ -356,7 +354,7 @@ def ranking_2(local_spectra, diagnoses, missing_information_cells, nor, early_st
 
     return normalized_diagnoses, information_sent, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last
+        revealed_information_percent_last, stoped_at
 
 
 def ranking_coef_0(S, diagnoses):

@@ -145,6 +145,7 @@ def write_data_to_excel(data):
         {'header': 'Useful Effort'},
         {'header': 'Useful Effort Percent'},
         {'header': 'Runtime'},
+        {'header': 'Early stoping component'},
         {'header': 'Weighted Precision 10'},
         {'header': 'Weighted Precision 20'},
         {'header': 'Weighted Precision 30'},
@@ -164,7 +165,7 @@ def write_data_to_excel(data):
         {'header': 'Weighted Recall 70'},
         {'header': 'Weighted Recall 80'},
         {'header': 'Weighted Recall 90'},
-        {'header': 'Weighted Recall 100'}
+        {'header': 'Weighted Recall 100'},
     ]
     # write the data to xlsx file
     workbook = xlsxwriter.Workbook('results.xlsx')

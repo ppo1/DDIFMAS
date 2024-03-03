@@ -69,9 +69,6 @@ def count_first_shows(local_spectrum, component_idx):
     return n_j
 
 # Algorithm 3
-# TODO: add n_j calculation
-# TODO: add early stopping parameter and alpha
-# TODO: add n_j estimation
 def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=True, alpha=1.0):
     """
     go over the agents, each agent computes the diagnoses it can
@@ -172,7 +169,7 @@ def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=Tr
 
     return diagnoses_sorted, information_sent, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last, len(njs)
+        revealed_information_percent_last, len(njs) if len(njs) else -1
 
 
 def pass_lowest_cardinality_D2(diagnoses):

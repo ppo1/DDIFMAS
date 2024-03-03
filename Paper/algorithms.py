@@ -95,7 +95,8 @@ def COEF(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
                wasted_effort_percent,
                useful_effort,
                useful_effort_percent,
-               delta_diag + delta_rank]]
+               delta_diag + delta_rank,
+               -1]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100) - 1])
     for k in range(10, 110, 10):
@@ -104,7 +105,6 @@ def COEF(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     return result
 
 # single distributed
-# TODO: add parameter for whether to do early stopping or not
 def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, early_stopping=True):
     """
     :param instance_num: instance number for indexing of experiments
@@ -142,7 +142,7 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, ea
     t2 = time.time()
     ranked_diagnoses, info_sent_ranking, revealed_information_sum, revealed_information_mean,\
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last = methods_for_ranking.ranking_2(local_spectra, diagnoses, missing_information_cells, nor, early_stopping)
+        revealed_information_percent_last, stoped_at = methods_for_ranking.ranking_2(local_spectra, diagnoses, missing_information_cells, nor, early_stopping)
     # sort the diagnoses according to their rank descending
     ranked_diagnoses.sort(key=lambda diag: diag[1], reverse=True)
     t3 = time.time()
@@ -195,7 +195,8 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, ea
                wasted_effort_percent,
                useful_effort,
                useful_effort_percent,
-               delta_diag + delta_rank]]
+               delta_diag + delta_rank,
+               stoped_at]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100) - 1])
     for k in range(10, 110, 10):
@@ -287,7 +288,8 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
                wasted_effort_percent,
                useful_effort,
                useful_effort_percent,
-               delta_diag + delta_rank]]
+               delta_diag + delta_rank,
+               -1]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])
     for k in range(10, 110, 10):
@@ -296,9 +298,6 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     return result
 
 # multi distributed
-# TODO: add parameter for whether to use early stopping or not
-# TODO: add parameter for alpha for using Partial-Cover
-# TODO: add parameter for whether to calculate or estimate n_j
 def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, early_stopping=True, alpha=1):
     """
     :param instance_num: instance number for indexing of experiments
@@ -394,7 +393,8 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, ea
                wasted_effort_percent,
                useful_effort,
                useful_effort_percent,
-               delta_diag + delta_rank]]
+               delta_diag + delta_rank,
+               stoped_component]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100)-1])
     for k in range(10, 110, 10):
@@ -498,7 +498,8 @@ def DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
                wasted_effort_percent,
                useful_effort,
                useful_effort_percent,
-               delta_diag + delta_rank]]
+               delta_diag + delta_rank,
+               -1]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100) - 1])
     for k in range(10, 110, 10):
@@ -602,7 +603,8 @@ def DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
                wasted_effort_percent,
                useful_effort,
                useful_effort_percent,
-               delta_diag + delta_rank]]
+               delta_diag + delta_rank,
+               -1]]
     for k in range(10, 110, 10):
         result[0].append(weighted_precision[math.ceil(len(weighted_precision) * float(k) / 100) - 1])
     for k in range(10, 110, 10):
