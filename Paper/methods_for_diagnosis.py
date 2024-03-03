@@ -101,8 +101,6 @@ def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=Tr
             extra_revield = njs[0] - appear_together
             for i in range(extra_revield):
                 revealed_information_table.append([1])
-            print(f'{appear_together=}, {extra_revield=}, {revealed_information_table=}') 
-            print(f'{local_spectrum=}')
         refined_revealed_information_table = refine_revealed_information_table_D1(revealed_information_table)
         revealed_information_tables.append(refined_revealed_information_table)
 
