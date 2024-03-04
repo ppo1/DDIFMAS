@@ -278,7 +278,7 @@ if __name__ == '__main__':
     number_of_runs_list = [10, 20, 30, 40, 50]
     number_of_instances_list = 1
 
-    # number_of_agents_list = [8]
+    # number_of_agents_list = [13]
     # number_of_faulty_list = [5]
     # agent_fault_probabilities_list = [0.9]
     # number_of_runs_list = [50]

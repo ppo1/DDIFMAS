@@ -363,7 +363,7 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, ea
                inum,
                str(F),
                '\r\n'.join(list(map(lambda arr: str(arr), S))),
-               f'DMRSD_I1D1R1{"_ES" if early_stopping else ""}{"_A" + str(alpha) if alpha != 1 else ""}',
+               f'DMRSD_I1D1R1{"_ES" if early_stopping else ""}{"_A" + str(alpha) if alpha != 1 else ""}{"_HS" if huristic_stop else ""}',
                str(missing_information_cells),
                str([len(S) * len(S[0]) - item for item in missing_information_cells]),
                str([(len(S) * len(S[0]) - item) / (len(S) * len(S[0])) for item in missing_information_cells]),
