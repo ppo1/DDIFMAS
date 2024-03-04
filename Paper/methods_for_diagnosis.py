@@ -1,6 +1,6 @@
 import copy
 import random
-
+import math
 import functions
 
 
@@ -68,8 +68,31 @@ def count_first_shows(local_spectrum, component_idx):
             n_j += 1
     return n_j
 
+def approx_j_stop(local_spectrum, component_idx, nor):
+    # initialize with 1 to get a conservative estimation
+    count0 = 1 
+    count1 = 1
+    for row in local_spectrum:
+        for j, cell in enumerate(row[:-1]):
+            if j == component_idx:
+                continue
+            if cell == 0:
+                count0 += 1
+            elif cell == 1:
+                count1 += 1
+    if count0 + count1 == 0:
+        return len(local_spectrum[0])
+    p0 = count0 / (count0 + count1)
+    return max(math.log(1. / nor, p0), 2)
+
+def has_fault(local_spectrum):
+    for row in local_spectrum:
+        if row[-1] == 1:
+            return True
+    return False
+
 # Algorithm 3
-def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=True, alpha=1.0):
+def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=True, alpha=1.0, huristic_stop=False):
     """
     go over the agents, each agent computes the diagnoses it can
     with the information it has and then passes it to the next agent
@@ -93,7 +116,7 @@ def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=Tr
 
         # reveal information given the diagnoses from the previous agents
         revealed_information_table = functions.reveal_information(passed_diagnoses, number_of_agents)
-        if early_stopping and a == 1:
+        if early_stopping and a == 1 and not huristic_stop:
             appear_together = 0
             for i in range(len(local_spectrum)):
                 if local_spectrum[i][0] == 1 and local_spectrum[i][1] == 1:
@@ -139,20 +162,25 @@ def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=Tr
         # selecting which diagnoses to pass on
         passed_diagnoses = diagnoses
         # print(f'{a}     sent diagnoses: {passed_diagnoses}')
-        if early_stopping:
+        if huristic_stop:
+            if has_fault(local_spectrum) and approx_j_stop(local_spectrum, a, nor) <= a:
+                break
+        elif early_stopping:
             if a == 0:
                 njs.append(count_first_shows(local_spectrum, a))
             else:
                 njs.append(count_first_shows(local_spectrum, a) + njs[-1])
-            print(njs)
-            if njs[a] >= alpha * float(nor):
+            # print(njs)
+            if (alpha == 1 and njs[a] >= nor) or (alpha < 1 and njs[a] >= alpha * nor and has_fault(local_spectrum)):
                 # print(f'early stopping at agent {a}. disinct_seen_runs: {njs[a]}, number of runs: {nor}')
                 # print(f'{revealed_information_tables=}')
                 break
-    if early_stopping and len(njs) < number_of_agents:
+
+    components_used = a + 1
+    if components_used < number_of_agents:
         revealed_information_table = functions.reveal_information(passed_diagnoses, number_of_agents)
         final_refined_revealed_information_table = refine_revealed_information_table_D1(revealed_information_table)
-    for _ in range(len(njs), number_of_agents):
+    for _ in range(components_used, number_of_agents):
         revealed_information_tables.append(final_refined_revealed_information_table)    
         
     # sort diagnoses
@@ -167,7 +195,7 @@ def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=Tr
 
     return diagnoses_sorted, information_sent, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last, len(njs) if len(njs) else -1
+        revealed_information_percent_last, components_used if (early_stopping or huristic_stop) else -1
 
 
 def pass_lowest_cardinality_D2(diagnoses):

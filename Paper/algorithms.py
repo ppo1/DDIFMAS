@@ -125,6 +125,7 @@ def DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, ea
     print_if(verbose, f'        - number of faulty agents: {nof}')
     print_if(verbose, f'        - agent fault probability: {afp}')
     print_if(verbose, f'        - number of runs: {nor}')
+    print_if(verbose, f'        - early stopping: {early_stopping}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
@@ -298,7 +299,7 @@ def MRSD(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False):
     return result
 
 # multi distributed
-def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, early_stopping=True, alpha=1):
+def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, early_stopping=True, alpha=1, huristic_stop=False):
     """
     :param instance_num: instance number for indexing of experiments
     :param noa: number of agents
@@ -316,6 +317,9 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, ea
     print_if(verbose, f'        - number of faulty agents: {nof}')
     print_if(verbose, f'        - agent fault probability: {afp}')
     print_if(verbose, f'        - number of runs: {nor}')
+    print_if(verbose, f'        - early stopping: {early_stopping}')
+    print_if(verbose, f'        - alpha: {alpha}')
+    print_if(verbose, f'        - huristic stop: {huristic_stop}')
 
     # prepare inputs: divide the spectrum to local spectra - one for each agent
     local_spectra, missing_information_cells = methods_for_input_preprocess.input_preprocess_1(noa, S)
@@ -325,10 +329,11 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, ea
     t0 = time.time()
     diagnoses, info_sent_diagnosis, revealed_information_sum, revealed_information_mean,\
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last, stoped_component = methods_for_diagnosis.diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping, alpha)
+        revealed_information_percent_last, stoped_component = methods_for_diagnosis.diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping, alpha, huristic_stop)
     t1 = time.time()
     delta_diag = t1 - t0
     print_if(verbose, f'DMRSD_I1D1R1:: diagnoses are: {diagnoses}')
+    print_if(verbose, f'DMRSD_I1D1R1:: stopped at: {stoped_component}')
 
     # rank the diagnoses - can choose the step size for the gradient descent
     print_if(verbose, f'DMRSD_I1D1R1:: running ranking')

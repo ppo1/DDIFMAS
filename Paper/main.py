@@ -207,18 +207,33 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                                 print(f'        - number of runs: {nor} ({nor_i + 1}/{nor_l})')
                             try:
                                 result_coef = algorithms.COEF(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose)
-                                result_dcoefI1D4R2 = algorithms.DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose)
+                                result_dcoefI1D4R2 = algorithms.DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=False)
+                                result_dcoefI1D4R2_es = algorithms.DCOEF_I1D4R2(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True)
                                 result_mrsd = algorithms.MRSD(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose)
-                                result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose)
+                                result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=False)
+                                result_dmrsdI1D1R1_es = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True)
+                                result_dmrsdI1D1R1_es_a09 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True, alpha=0.9)
+                                result_dmrsdI1D1R1_es_a075 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True, alpha=0.75)
+                                result_dmrsdI1D1R1_hs = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True, huristic_stop=True)
                                 result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose)
                                 result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose)
                                 results += result_coef
                                 result_rows += 1
                                 results += result_dcoefI1D4R2
                                 result_rows += 1
+                                results += result_dcoefI1D4R2_es
+                                result_rows += 1
                                 results += result_mrsd
                                 result_rows += 1
                                 results += result_dmrsdI1D1R1
+                                result_rows += 1
+                                results += result_dmrsdI1D1R1_es
+                                result_rows += 1
+                                results += result_dmrsdI1D1R1_es_a09
+                                result_rows += 1
+                                results += result_dmrsdI1D1R1_es_a075
+                                result_rows += 1
+                                results += result_dmrsdI1D1R1_hs
                                 result_rows += 1
                                 results += result_dmrsdI1D2R1
                                 result_rows += 1
@@ -271,7 +286,7 @@ if __name__ == '__main__':
 
     # run_random_experiments([5, 6, 7, 8, 9], [1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)
     time_report = run_random_experiments(number_of_agents_list, number_of_faulty_list, agent_fault_probabilities_list,
-                                         number_of_runs_list, number_of_instances_list, start_time, verbose=True)
+                                         number_of_runs_list, number_of_instances_list, start_time, verbose=False)
 
     end_time = datetime.now()
     delta = end_time - start_time
