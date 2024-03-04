@@ -335,6 +335,11 @@ def DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum, F, S, verbose=False, ea
     print_if(verbose, f'DMRSD_I1D1R1:: diagnoses are: {diagnoses}')
     print_if(verbose, f'DMRSD_I1D1R1:: stopped at: {stoped_component}')
 
+    if early_stopping and (alpha < 1 or huristic_stop):
+        # remove the unused rows from S and recalculate local spectra
+        new_S = [row for row in S if 1 in row and row.index(1) <= stoped_component]
+        local_spectra, _ = methods_for_input_preprocess.input_preprocess_1(noa, new_S)
+
     # rank the diagnoses - can choose the step size for the gradient descent
     print_if(verbose, f'DMRSD_I1D1R1:: running ranking')
     t2 = time.time()

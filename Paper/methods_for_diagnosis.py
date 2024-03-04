@@ -195,7 +195,7 @@ def diagnosis_1(local_spectra, missing_information_cells, nor, early_stopping=Tr
 
     return diagnoses_sorted, information_sent, revealed_information_sum, revealed_information_mean, \
         revealed_information_per_agent, revealed_information_last, revealed_information_percent_per_agent, \
-        revealed_information_percent_last, components_used if (early_stopping or huristic_stop) else -1
+        revealed_information_percent_last, components_used - 1 if (early_stopping or huristic_stop) else -1
 
 
 def pass_lowest_cardinality_D2(diagnoses):
