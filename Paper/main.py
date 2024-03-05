@@ -214,7 +214,6 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                                 result_dmrsdI1D1R1 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=False)
                                 result_dmrsdI1D1R1_es = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True)
                                 result_dmrsdI1D1R1_es_a09 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True, alpha=0.9)
-                                result_dmrsdI1D1R1_es_a075 = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True, alpha=0.75)
                                 result_dmrsdI1D1R1_hs = algorithms.DMRSD_I1D1R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose, early_stopping=True, huristic_stop=True)
                                 result_dmrsdI1D2R1 = algorithms.DMRSD_I1D2R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose)
                                 result_dmrsdI1D3R1 = algorithms.DMRSD_I1D3R1(instance_num, noa, nof, afp, nor, inum + 1, F, S, verbose)
@@ -231,8 +230,6 @@ def run_random_experiments(number_of_agents, number_of_faulty, agent_fault_proba
                                 results += result_dmrsdI1D1R1_es
                                 result_rows += 1
                                 results += result_dmrsdI1D1R1_es_a09
-                                result_rows += 1
-                                results += result_dmrsdI1D1R1_es_a075
                                 result_rows += 1
                                 results += result_dmrsdI1D1R1_hs
                                 result_rows += 1
