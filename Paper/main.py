@@ -1,5 +1,6 @@
 import random
 from datetime import datetime
+import time
 
 import matplotlib.pyplot as plt
 import xlsxwriter
@@ -168,7 +169,7 @@ def write_data_to_excel(data):
         {'header': 'Weighted Recall 100'},
     ]
     # write the data to xlsx file
-    workbook = xlsxwriter.Workbook('results.xlsx')
+    workbook = xlsxwriter.Workbook(f'results_{time.time()}.xlsx')
     worksheet = workbook.add_worksheet('results')
     worksheet.add_table(0, 0, len(data), len(columns) - 1, {'data': data, 'columns': columns})
     workbook.close()
